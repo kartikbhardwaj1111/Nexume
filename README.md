@@ -1,19 +1,19 @@
-# Resume Fit CodeNex
+# Nexume
 
 <div align="center"> 
  
- <img src="public/logo.png" alt="Resume Fit CodeNex Logo" width="400"/>
+ <img src="public/logo.png" alt="Nexume Logo" width="400"/>
  
- An AI-powered resume analysis and optimization tool to help job seekers match their resumes to specific job descriptions. 
+ Nexume - AI-powered career acceleration platform that helps job seekers optimize their resumes, analyze job postings, and accelerate their career growth. 
  
  [![React](https://img.shields.io/badge/React-18.3.1-blue)](https://reactjs.org/) 
- [![TypeScript](https://img.shields.io/badge/TypeScript-5.5.3-blue)](https://www.typescriptlang.org/) 
+ [![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow)](https://developer.mozilla.org/en-US/docs/Web/JavaScript) 
  [![Vite](https://img.shields.io/badge/Vite-5.4.1-purple)](https://vitejs.dev/) 
  [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4.11-blue)](https://tailwindcss.com/) 
  [![Google Generative AI](https://img.shields.io/badge/Google%20Generative%20AI-1.2.22-green)](https://ai.google.dev/) 
  [![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/) 
  
- **[🔗 Live Demo: Resume Fit CodeNex](https://resumefit.codenex.dev/)** 
+ **[🔗 Live Demo: Nexume](https://nexume.app/)** 
  
  </div>
 
@@ -38,7 +38,7 @@ Resume Fit CodeNex evaluates resumes on four key pillars (total 100 points):
 
 ## 🛠️ Technologies Used
 
-- **Frontend**: React 18, TypeScript 5, Vite 5, Tailwind CSS 3
+- **Frontend**: React 18, JavaScript ES6+, Vite 5, Tailwind CSS 3
 - **UI Components**: Radix UI, Lucide React icons, Sonner for toasts
 - **Routing**: React Router 6
 - **State Management**: React Context API, TanStack React Query
