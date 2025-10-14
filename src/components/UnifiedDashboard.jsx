@@ -30,6 +30,7 @@ import { useAppContext } from '../context/AppContext';
 import { CareerAnalyzer } from '../services/career/CareerAnalyzer';
 import InterviewSessionManager from '../services/interview/InterviewSessionManager';
 import LocalStorageManager from '../services/storage/LocalStorageManager';
+import { SmartJobFinder } from './SmartJobFinder';
 
 const UnifiedDashboard = () => {
   const navigate = useNavigate();
@@ -62,6 +63,17 @@ const UnifiedDashboard = () => {
         careerProgress = await careerAnalyzer.assessCurrentLevel(resumeData.content || '');
       }
       
+      // Extract skills from resume analysis if available
+      let resumeSkills = [];
+      if (lastAnalysis?.keywords) {
+        resumeSkills = lastAnalysis.keywords;
+      } else if (careerProgress?.skills) {
+        resumeSkills = careerProgress.skills;
+      } else if (resumeData?.content) {
+        // Extract basic skills from resume content
+        resumeSkills = extractSkillsFromText(resumeData.content);
+      }
+      
       // Load interview statistics
       const interviewManager = new InterviewSessionManager();
       const interviewStats = interviewManager.getSessionStats();
@@ -70,11 +82,11 @@ const UnifiedDashboard = () => {
       const recentActivity = LocalStorageManager.getRecentActivity() || [];
       
       // Generate recommendations
-      const recommendations = generateRecommendations(lastAnalysis, careerProgress, interviewStats);
+      const recommendations = generateRecommendations(lastAnalysis, careerProgress, interviewStats, resumeSkills);
       
       setDashboardData({
         resumeScore: lastAnalysis?.score || null,
-        careerProgress,
+        careerProgress: { ...careerProgress, skills: resumeSkills },
         interviewStats,
         recentActivity: recentActivity.slice(0, 5), // Show last 5 activities
         recommendations
@@ -86,7 +98,27 @@ const UnifiedDashboard = () => {
     }
   };
 
-  const generateRecommendations = (resumeAnalysis, careerProgress, interviewStats) => {
+  const extractSkillsFromText = (text) => {
+    const commonSkills = [
+      'JavaScript', 'Python', 'Java', 'React', 'Node.js', 'HTML', 'CSS', 'SQL',
+      'Git', 'AWS', 'Docker', 'Kubernetes', 'TypeScript', 'Angular', 'Vue.js',
+      'MongoDB', 'PostgreSQL', 'Redis', 'GraphQL', 'REST API', 'Microservices',
+      'Machine Learning', 'Data Analysis', 'Project Management', 'Agile', 'Scrum'
+    ];
+    
+    const foundSkills = [];
+    const lowerText = text.toLowerCase();
+    
+    commonSkills.forEach(skill => {
+      if (lowerText.includes(skill.toLowerCase())) {
+        foundSkills.push(skill);
+      }
+    });
+    
+    return foundSkills.slice(0, 10); // Return top 10 skills
+  };
+
+  const generateRecommendations = (resumeAnalysis, careerProgress, interviewStats, resumeSkills) => {
     const recommendations = [];
     
     // Resume-based recommendations
@@ -135,6 +167,19 @@ const UnifiedDashboard = () => {
         path: '/interview-prep',
         priority: 'medium',
         icon: Users
+      });
+    }
+    
+    // Job matching recommendations
+    if (resumeAnalysis && resumeSkills?.length > 0) {
+      recommendations.push({
+        type: 'jobs',
+        title: 'Find Matching Jobs',
+        description: `Discover job opportunities matching your ${resumeSkills.length} identified skills`,
+        action: 'Find Jobs',
+        path: '/job-analysis',
+        priority: 'medium',
+        icon: Briefcase
       });
     }
     
@@ -282,8 +327,9 @@ const UnifiedDashboard = () => {
       {/* Main Content Tabs */}
       <motion.div variants={itemVariants}>
         <Tabs defaultValue="recommendations" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
+            <TabsTrigger value="jobs">Find Jobs</TabsTrigger>
             <TabsTrigger value="progress">Progress</TabsTrigger>
             <TabsTrigger value="activity">Recent Activity</TabsTrigger>
           </TabsList>
@@ -333,6 +379,13 @@ const UnifiedDashboard = () => {
                 );
               })}
             </div>
+          </TabsContent>
+
+          <TabsContent value="jobs" className="space-y-4">
+            <SmartJobFinder 
+              resumeSkills={dashboardData.careerProgress?.skills || []} 
+              className="w-full"
+            />
           </TabsContent>
 
           <TabsContent value="progress" className="space-y-4">
