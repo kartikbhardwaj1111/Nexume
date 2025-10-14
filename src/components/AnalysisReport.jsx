@@ -4,7 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Download, RefreshCw, TrendingUp, Award, Target, Zap } from 'lucide-react';
+import { Download, RefreshCw, TrendingUp, Award, Target } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 
@@ -52,9 +52,9 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
       /Final Score:\s*(\d+)\/100/i,
       /(\d+)\/100/g // Last resort - find any X/100 pattern
     ];
-    
+
     let score = 0;
-    
+
     for (const pattern of patterns) {
       const match = content.match(pattern);
       if (match) {
@@ -62,7 +62,7 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
         break;
       }
     }
-    
+
     // If no score found, calculate from detailed scores
     if (score === 0) {
       const detailedScores = extractDetailedScores(content);
@@ -71,16 +71,16 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
     } else {
       console.log('Extracted score directly:', score);
     }
-    
+
     // Debug: Log content snippet for troubleshooting
     if (content) {
       const firstLines = content.split('\n').slice(0, 10).join('\n');
       console.log('Content preview for score extraction:', firstLines);
     }
-    
+
     // Ensure score is within valid range
     score = Math.max(0, Math.min(100, score));
-    
+
     let level = 'Low';
     let color = 'destructive';
     if (score >= 75) {
@@ -90,7 +90,7 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
       level = 'Medium';
       color = 'warning';
     }
-    
+
     return { score, level, color };
   };
 
@@ -143,7 +143,7 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
 
   const { score, level, color } = extractScore(content || '');
   const detailedScores = extractDetailedScores(content || '');
-  
+
   // Ensure we have valid data for charts
   const validScore = isNaN(score) ? 0 : score;
   const validDetailedScores = detailedScores.every(item => !isNaN(item.value)) ? detailedScores : [
@@ -152,14 +152,14 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
     { name: 'Tools', value: 0, max: 20, color: '#ffc658' },
     { name: 'Education', value: 0, max: 10, color: '#ff7300' }
   ];
-  
+
   const pieData = [
     { name: 'Achieved', value: validScore, color: '#10b981' },
     { name: 'Remaining', value: Math.max(0, 100 - validScore), color: '#e5e7eb' }
   ];
 
   const LoadingSkeleton = () => (
-    <motion.div 
+    <motion.div
       className="space-y-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -175,18 +175,18 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
           Analyzing your résumé with AI...
         </span>
       </div>
-      
+
       {/* Animated loading bars */}
       <div className="space-y-4">
         {[1, 2, 3, 4, 5].map((i) => (
-          <motion.div 
-            key={i} 
+          <motion.div
+            key={i}
             className="space-y-3"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.1 }}
           >
-            <motion.div 
+            <motion.div
               className="h-4 bg-gradient-to-r from-primary/20 to-primary/40 rounded-lg overflow-hidden"
               style={{ width: `${Math.random() * 40 + 40}%` }}
             >
@@ -198,7 +198,7 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
                 }}
               />
             </motion.div>
-            <motion.div 
+            <motion.div
               className="h-3 bg-muted/60 rounded animate-pulse"
               style={{ width: `${Math.random() * 30 + 30}%` }}
             />
@@ -220,7 +220,7 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
           >
             <Card className="border-0 shadow-2xl bg-gradient-to-br from-primary/10 via-primary-glow/5 to-accent/20 backdrop-blur-lg overflow-hidden relative">
               <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 animate-gradient-x" />
-              
+
               <CardHeader className="pb-8 relative z-10">
                 <div className="flex items-center justify-between">
                   <motion.div
@@ -229,7 +229,7 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
                     transition={{ delay: 0.2 }}
                   >
                     <CardTitle className="text-2xl font-bold flex items-center gap-4">
-                      <motion.div 
+                      <motion.div
                         className="w-12 h-12 rounded-xl bg-gradient-to-br from-success to-success/80 flex items-center justify-center shadow-lg"
                         whileHover={{ scale: 1.1, rotate: 360 }}
                         transition={{ duration: 0.6 }}
@@ -239,13 +239,13 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
                       Analysis Complete
                     </CardTitle>
                   </motion.div>
-                  
+
                   <motion.div
                     initial={{ opacity: 0, scale: 0 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.4, type: "spring", stiffness: 200 }}
                   >
-                    <Badge 
+                    <Badge
                       variant="outline"
                       className={`
                         px-4 py-2 text-lg font-bold border-2 shadow-lg
@@ -331,7 +331,7 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
                 {isLoading ? (
                   <LoadingSkeleton />
                 ) : (
-                  <motion.div 
+                  <motion.div
                     className="prose prose-sm max-w-none"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -340,7 +340,7 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
                     <ReactMarkdown
                       components={{
                         h1: ({ children }) => (
-                          <motion.h1 
+                          <motion.h1
                             className="text-3xl font-bold text-foreground mb-6 pb-3 border-b border-border"
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -350,7 +350,7 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
                           </motion.h1>
                         ),
                         h2: ({ children }) => (
-                          <motion.h2 
+                          <motion.h2
                             className="text-2xl font-semibold text-foreground mt-10 mb-4 flex items-center gap-2"
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -361,7 +361,7 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
                           </motion.h2>
                         ),
                         h3: ({ children }) => (
-                          <motion.h3 
+                          <motion.h3
                             className="text-xl font-medium text-foreground mt-8 mb-3 flex items-center gap-2"
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -372,7 +372,7 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
                           </motion.h3>
                         ),
                         p: ({ children }) => (
-                          <motion.p 
+                          <motion.p
                             className="text-foreground mb-4 leading-relaxed"
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -382,7 +382,7 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
                           </motion.p>
                         ),
                         ul: ({ children }) => (
-                          <motion.ul 
+                          <motion.ul
                             className="list-disc list-inside space-y-2 mb-6 text-foreground"
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -392,7 +392,7 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
                           </motion.ul>
                         ),
                         ol: ({ children }) => (
-                          <motion.ol 
+                          <motion.ol
                             className="list-decimal list-inside space-y-2 mb-6 text-foreground"
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -402,7 +402,7 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
                           </motion.ol>
                         ),
                         li: ({ children }) => (
-                          <motion.li 
+                          <motion.li
                             className="ml-2 hover:text-primary transition-colors duration-200"
                             whileHover={{ x: 5 }}
                           >
@@ -420,7 +420,7 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
                           </code>
                         ),
                         blockquote: ({ children }) => (
-                          <motion.blockquote 
+                          <motion.blockquote
                             className="border-l-4 border-primary pl-6 italic text-muted-foreground bg-primary/5 py-4 rounded-r-lg"
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -444,7 +444,7 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
       {/* Action Buttons */}
       <AnimatePresence>
         {!isLoading && content && (
-          <motion.div 
+          <motion.div
             className="flex gap-6 justify-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -454,7 +454,7 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Button 
+              <Button
                 onClick={downloadReport}
                 size="lg"
                 className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary shadow-2xl hover:shadow-primary/25 transform transition-all duration-300 px-10"
@@ -463,13 +463,13 @@ export function AnalysisReport({ content, isLoading, onStartOver }) {
                 Download Report
               </Button>
             </motion.div>
-            
+
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="lg"
                 onClick={onStartOver}
                 className="hover:bg-gradient-to-r hover:from-accent/10 hover:to-primary/10 transition-all duration-300 px-10 border-2 hover:border-primary/50"

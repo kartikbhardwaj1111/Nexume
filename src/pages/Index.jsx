@@ -2,26 +2,43 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import CountUp from 'react-countup';
+import { memo, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowRight, FileText, Users, Sparkles, BarChart3, Target, LayoutDashboard } from 'lucide-react';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { 
+  ArrowRight, 
+  Zap, 
+  Shield, 
+  TrendingUp, 
+  Users, 
+  Star, 
+  CheckCircle, 
+  Sparkles, 
+  LayoutDashboard,
+  Brain,
+  Target,
+  Award,
+  Briefcase,
+  FileText,
+  BarChart3,
+  Globe,
+  Clock
+} from 'lucide-react';
+
 import SplashCursor from '@/components/SplashCursor';
-import FeatureGrid from '@/components/FeatureGrid';
-import ProfessionalFeatures from '@/components/ProfessionalFeatures';
-import DemoSection from '@/components/DemoSection';
 import UnifiedDashboard from '@/components/UnifiedDashboard';
 import { useAppContext } from '@/context/AppContext';
-import LocalStorageManager from '@/services/storage/LocalStorageManager';
-
+import LocalStorageManager from '../services/storage/LocalStorageManager.js';
 import ShinyText from '@/components/ShinyText';
 
 export default function Index() {
   const navigate = useNavigate();
   const { state } = useAppContext();
+  const [heroRef, heroInView] = useInView({ threshold: 0.3, triggerOnce: true });
   const [statsRef, statsInView] = useInView({ threshold: 0.3, triggerOnce: true });
+  const [featuresRef, featuresInView] = useInView({ threshold: 0.2, triggerOnce: true });
   
   // Check if user has any data to show dashboard
   const hasUserData = () => {
@@ -32,12 +49,70 @@ export default function Index() {
   };
 
   const stats = [
-    { number: 95, label: "ATS Pass Rate", suffix: "%" },
-    { number: 3.2, label: "More Interview Calls", suffix: "x" },
-    { number: 50000, label: "Resumes Optimized", suffix: "+" }
+    { number: 98, label: "ATS Success Rate", suffix: "%", icon: Shield },
+    { number: 4.2, label: "More Interviews", suffix: "x", icon: TrendingUp },
+    { number: 75000, label: "Careers Transformed", suffix: "+", icon: Users },
+    { number: 24, label: "Average Time Saved", suffix: "h", icon: Clock }
   ];
 
-  const containerVariants = {
+  const features = [
+    {
+      icon: Brain,
+      title: "AI-Powered ATS Analysis",
+      description: "Advanced machine learning algorithms analyze your resume against 1000+ job requirements with 98% ATS success rate",
+      color: "from-blue-500 to-cyan-500",
+      action: () => navigate('/ats-checker'),
+      actionText: "Check Resume",
+      stats: "98% Success Rate"
+    },
+    {
+      icon: Target,
+      title: "Smart Job Matching",
+      description: "AI-powered job recommendations tailored to your skills, with special focus on India's growing tech market",
+      color: "from-purple-500 to-pink-500",
+      action: () => navigate('/job-analysis'),
+      actionText: "Find Jobs",
+      stats: "75K+ Jobs Matched"
+    },
+    {
+      icon: TrendingUp,
+      title: "Career Progression",
+      description: "Track your career growth with personalized roadmaps, skills gap analysis, and milestone tracking",
+      color: "from-green-500 to-emerald-500",
+      action: () => navigate('/career'),
+      actionText: "Plan Career",
+      stats: "4.2x More Interviews"
+    },
+    {
+      icon: Users,
+      title: "Interview Preparation",
+      description: "Practice with mock interviews, get AI feedback, and prepare for company-specific questions",
+      color: "from-orange-500 to-red-500",
+      action: () => navigate('/interview-prep'),
+      actionText: "Start Practice",
+      stats: "24h Time Saved"
+    },
+    {
+      icon: BarChart3,
+      title: "Analytics Dashboard",
+      description: "Track your progress with detailed analytics, performance metrics, and improvement insights",
+      color: "from-indigo-500 to-purple-500",
+      action: () => navigate('/analytics'),
+      actionText: "View Analytics",
+      stats: "Real-time Insights"
+    },
+    {
+      icon: FileText,
+      title: "Professional Templates",
+      description: "Choose from ATS-optimized resume templates designed by professionals for maximum impact",
+      color: "from-pink-500 to-rose-500",
+      action: () => navigate('/templates'),
+      actionText: "Browse Templates",
+      stats: "50+ Templates"
+    }
+  ];
+
+  const containerVariants = useMemo(() => ({
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -46,19 +121,19 @@ export default function Index() {
         delayChildren: 0.2
       }
     }
-  };
+  }), []);
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
+  const itemVariants = useMemo(() => ({
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.6,
+        duration: 0.5,
         ease: "easeOut"
       }
     }
-  };
+  }), []);
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
@@ -68,49 +143,10 @@ export default function Index() {
         {/* Primary gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-indigo-600/40 to-purple-600/30" />
         
-        {/* Animated gradient orbs */}
-        <motion.div
-          className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-blue-400/40 via-purple-400/30 to-transparent rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.3, 1],
-            rotate: [0, 180, 360],
-            x: [0, 50, 0],
-            y: [0, -30, 0]
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        
-        <motion.div
-          className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-cyan-400/40 via-teal-400/30 to-transparent rounded-full blur-3xl"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            rotate: [360, 180, 0],
-            x: [0, -50, 0],
-            y: [0, 30, 0]
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        
-        <motion.div
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-purple-400/30 via-pink-400/20 to-transparent rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.4, 1],
-            rotate: [0, -180, -360],
-          }}
-          transition={{
-            duration: 30,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        />
+        {/* Static gradient orbs for better performance */}
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-blue-400/30 via-purple-400/20 to-transparent rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-cyan-400/30 via-teal-400/20 to-transparent rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-purple-400/20 via-pink-400/15 to-transparent rounded-full blur-3xl" />
         
         {/* Subtle grid pattern */}
         <div className="absolute inset-0 opacity-10">
@@ -127,9 +163,7 @@ export default function Index() {
         <div className="absolute inset-0 bg-gradient-radial from-transparent via-black/20 to-black/40" />
       </div>
 
-      <div className="absolute top-4 right-4 z-50">
-        <ThemeToggle />
-      </div>
+
       
       <div className="max-w-7xl mx-auto px-4 py-12 relative z-10">
         {/* Conditional Content - Dashboard or Landing */}
@@ -142,20 +176,25 @@ export default function Index() {
           >
             <Tabs defaultValue="dashboard" className="space-y-6">
               <div className="flex items-center justify-between">
-                <TabsList className="grid w-full max-w-md grid-cols-2">
-                  <TabsTrigger value="dashboard" className="flex items-center space-x-2">
+                <TabsList className="grid w-full max-w-md grid-cols-2 bg-white/10 backdrop-blur-sm border-white/20">
+                  <TabsTrigger value="dashboard" className="flex items-center space-x-2 data-[state=active]:bg-white/20">
                     <LayoutDashboard className="w-4 h-4" />
                     <span>Dashboard</span>
                   </TabsTrigger>
-                  <TabsTrigger value="landing" className="flex items-center space-x-2">
+                  <TabsTrigger value="landing" className="flex items-center space-x-2 data-[state=active]:bg-white/20">
                     <Sparkles className="w-4 h-4" />
                     <span>Explore</span>
                   </TabsTrigger>
                 </TabsList>
-                <div className="text-right">
-                  <p className="text-sm text-blue-200">Welcome back!</p>
-                  <p className="text-xs text-blue-300">Continue your career journey</p>
-                </div>
+                <motion.div 
+                  className="text-right"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <p className="text-lg font-semibold text-blue-100">Welcome back!</p>
+                  <p className="text-sm text-blue-300">Continue your career journey</p>
+                </motion.div>
               </div>
               
               <TabsContent value="dashboard" className="space-y-6">
@@ -165,11 +204,16 @@ export default function Index() {
               <TabsContent value="landing" className="space-y-6">
                 <LandingContent 
                   navigate={navigate}
+                  heroRef={heroRef}
+                  heroInView={heroInView}
                   statsRef={statsRef}
                   statsInView={statsInView}
+                  featuresRef={featuresRef}
+                  featuresInView={featuresInView}
                   containerVariants={containerVariants}
                   itemVariants={itemVariants}
                   stats={stats}
+                  features={features}
                 />
               </TabsContent>
             </Tabs>
@@ -177,11 +221,16 @@ export default function Index() {
         ) : (
           <LandingContent 
             navigate={navigate}
+            heroRef={heroRef}
+            heroInView={heroInView}
             statsRef={statsRef}
             statsInView={statsInView}
+            featuresRef={featuresRef}
+            featuresInView={featuresInView}
             containerVariants={containerVariants}
             itemVariants={itemVariants}
             stats={stats}
+            features={features}
           />
         )}
       </div>
@@ -189,823 +238,463 @@ export default function Index() {
   );
 }
 
-// Extracted Landing Content Component
-function LandingContent({ navigate, statsRef, statsInView, containerVariants, itemVariants, stats }) {
+// New Landing Content Component
+function LandingContent({ navigate, heroRef, heroInView, statsRef, statsInView, featuresRef, featuresInView, containerVariants, itemVariants, stats, features }) {
   return (
     <>
-      {/* Hero Section */}
-      <motion.div
-        className="text-center mb-20"
+      {/* Hero Section - Completely Redesigned */}
+      <motion.section
+        ref={heroRef}
+        className="text-center mb-32 relative"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-          <motion.div className="mb-8" variants={itemVariants}>
-            <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              <Badge variant="secondary" className="mb-6 px-6 py-3 text-sm font-medium bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20 hover:scale-105 transition-transform">
-                <Sparkles className="w-4 h-4 mr-2" />
-                AI-Powered Resume Analysis
-              </Badge>
-            </motion.div>
-            
-            <motion.h1 
-              className="text-6xl md:text-8xl font-bold mb-8 relative"
-              variants={itemVariants}
-            >
-              <span className="bg-gradient-to-r from-white via-blue-200 to-cyan-200 bg-clip-text text-transparent animate-gradient-x">
-                Transform Your Resume Into Interview Gold
-              </span>
-              <motion.div
-                className="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full"
-                animate={{
-                  scale: [1, 1.2, 1],
-                  rotate: [0, 180, 360],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              />
-            </motion.h1>
-            
-            <motion.p 
-              className="text-xl md:text-2xl text-blue-100 max-w-4xl mx-auto leading-relaxed"
-              variants={itemVariants}
-            >
-              AI-powered ATS analysis that gets you noticed by recruiters. Stop wondering if your resume will pass ATS filters - get instant refinements that land interviews.
-            </motion.p>
+        <motion.div className="mb-12" variants={itemVariants}>
+          <motion.div
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mb-8"
+          >
+            <Badge className="px-8 py-4 text-base font-semibold bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-blue-400/30 hover:scale-110 transition-all duration-300 backdrop-blur-sm">
+              <Zap className="w-5 h-5 mr-3" />
+              Next-Generation Career Intelligence
+            </Badge>
           </motion.div>
           
-          <motion.div 
-            className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16"
+          <motion.h1 
+            className="text-6xl md:text-8xl font-black mb-8 relative leading-tight"
             variants={itemVariants}
           >
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button 
-                size="lg" 
-                onClick={() => navigate('/ats-checker')}
-                className="group px-10 py-6 text-lg bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary shadow-2xl hover:shadow-primary/25 transition-all duration-300"
-              >
-                Analyze My Resume Now
-                <motion.div
-                  className="ml-2"
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  <ArrowRight className="w-5 h-5" />
-                </motion.div>
-              </Button>
-            </motion.div>
-            
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button 
-                variant="outline" 
-                size="lg"
-                onClick={() => navigate('/career')}
-                className="px-10 py-6 text-lg border-2 hover:bg-gradient-to-r hover:from-accent/10 hover:to-primary/10 transition-all duration-300"
-              >
-                <Target className="w-5 h-5 mr-2" />
-                Career Path
-              </Button>
-            </motion.div>
-          </motion.div>
-
-          {/* Animated Stats */}
-          <motion.div 
-            ref={statsRef}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20"
-            variants={containerVariants}
-            initial="hidden"
-            animate={statsInView ? "visible" : "hidden"}
+            <span className="bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent">
+              Career Success
+            </span>
+            <br />
+            <span className="text-5xl md:text-7xl bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Powered by AI
+            </span>
+          </motion.h1>
+          
+          <motion.p 
+            className="text-xl md:text-2xl text-blue-100 max-w-4xl mx-auto leading-relaxed font-light mb-12"
+            variants={itemVariants}
           >
-            {stats.map((stat, index) => (
+            Complete career platform with AI-powered resume analysis, smart job matching, interview prep, and career progression tracking.
+          </motion.p>
+        </motion.div>
+        
+        <motion.div 
+          className="flex flex-col sm:flex-row gap-8 justify-center items-center mb-20"
+          variants={itemVariants}
+        >
+          <motion.div
+            whileHover={{ scale: 1.02, y: -3 }}
+            className="relative"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur-xl opacity-30" />
+            <Button 
+              size="lg" 
+              onClick={() => navigate('/ats-checker')}
+              className="relative px-12 py-8 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-700 hover:from-blue-700 hover:to-purple-800 shadow-2xl border-0 rounded-2xl transition-all duration-200 hover:scale-105"
+            >
+              <Sparkles className="w-6 h-6 mr-3" />
+              Start Your Transformation
+              <ArrowRight className="w-6 h-6 ml-3" />
+            </Button>
+          </motion.div>
+          
+          <Button 
+            variant="outline" 
+            size="lg"
+            onClick={() => navigate('/templates')}
+            className="px-12 py-8 text-xl font-semibold border-2 border-white/30 hover:border-white/50 bg-white/5 hover:bg-white/10 backdrop-blur-sm rounded-2xl transition-all duration-200 hover:scale-105"
+          >
+            <FileText className="w-6 h-6 mr-3" />
+            Explore Templates
+          </Button>
+        </motion.div>
+      </motion.section>
+
+      {/* Stats Section - Enhanced */}
+      <motion.section 
+        ref={statsRef}
+        className="mb-32"
+        initial={{ opacity: 0, y: 50 }}
+        animate={statsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+        transition={{ duration: 0.8 }}
+      >
+        <div className="text-center mb-16">
+          <motion.h2 
+            className="text-4xl md:text-5xl font-bold text-white mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={statsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ delay: 0.2 }}
+          >
+            Trusted by Professionals Worldwide
+          </motion.h2>
+          <motion.p 
+            className="text-xl text-blue-200 max-w-3xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={statsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ delay: 0.4 }}
+          >
+            Join thousands who've accelerated their careers with our AI-powered platform
+          </motion.p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {stats.map((stat, index) => {
+            const IconComponent = stat.icon;
+            return (
               <motion.div 
                 key={index} 
                 className="text-center group"
-                variants={itemVariants}
-                whileHover={{ scale: 1.05 }}
+                initial={{ opacity: 0, y: 30, scale: 0.8 }}
+                animate={statsInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 30, scale: 0.8 }}
+                transition={{ delay: index * 0.1 + 0.6, duration: 0.6 }}
+                whileHover={{ scale: 1.05, y: -10 }}
               >
-                <motion.div 
-                  className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2"
-                  initial={{ scale: 0 }}
-                  animate={statsInView ? { scale: 1 } : { scale: 0 }}
+                <Card className="p-8 bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-sm hover:from-white/15 hover:to-white/10 transition-all duration-300 group-hover:shadow-2xl">
+                  <motion.div
+                    className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center"
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 0.8 }}
+                  >
+                    <IconComponent className="w-8 h-8 text-white" />
+                  </motion.div>
+                  
+                  <motion.div 
+                    className="text-5xl md:text-6xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-3"
+                    initial={{ scale: 0 }}
+                    animate={statsInView ? { scale: 1 } : { scale: 0 }}
+                    transition={{ delay: index * 0.2 + 0.8, duration: 0.6 }}
+                  >
+                    {statsInView && (
+                      <CountUp
+                        end={stat.number}
+                        duration={2.5}
+                        delay={index * 0.2}
+                        decimals={stat.number % 1 !== 0 ? 1 : 0}
+                      />
+                    )}
+                    {stat.suffix}
+                  </motion.div>
+                  <div className="text-white font-semibold text-lg">{stat.label}</div>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
+      </motion.section>
+
+      {/* Features Section - Completely New */}
+      <motion.section 
+        ref={featuresRef}
+        className="mb-32"
+        initial={{ opacity: 0 }}
+        animate={featuresInView ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <div className="text-center mb-16">
+          <motion.h2 
+            className="text-4xl md:text-5xl font-bold mb-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={featuresInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ delay: 0.2 }}
+          >
+            <span className="bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent">
+              Complete Career Platform
+            </span>
+          </motion.h2>
+          <motion.p 
+            className="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed"
+            initial={{ opacity: 0, y: 30 }}
+            animate={featuresInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ delay: 0.4 }}
+          >
+            Everything you need to accelerate your career - from resume optimization to interview success
+          </motion.p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {features.map((feature, index) => {
+            const IconComponent = feature.icon;
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 50, rotateX: -15 }}
+                animate={featuresInView ? { opacity: 1, y: 0, rotateX: 0 } : { opacity: 0, y: 50, rotateX: -15 }}
+                transition={{ delay: index * 0.1 + 0.6, duration: 0.8 }}
+                whileHover={{ 
+                  scale: 1.02, 
+                  y: -8
+                }}
+                className="group cursor-pointer"
+                onClick={feature.action}
+              >
+                <Card className="p-8 h-full bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-sm hover:from-white/15 hover:to-white/10 transition-all duration-300 relative overflow-hidden">
+                  {/* Animated Background */}
+                  <motion.div
+                    className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
+                  />
+                  
+                  {/* Simple Hover Effect */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
+                  
+                  <div className="relative z-10">
+                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-6 shadow-xl group-hover:shadow-2xl transition-shadow duration-300`}>
+                      <IconComponent className="w-8 h-8 text-white" />
+                    </div>
+                    
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-xl font-bold text-white">{feature.title}</h3>
+                      <Badge className={`bg-gradient-to-r ${feature.color} text-white border-0 text-xs`}>
+                        {feature.stats}
+                      </Badge>
+                    </div>
+                    
+                    <p className="text-blue-100 leading-relaxed mb-6 text-sm">{feature.description}</p>
+                    
+                    <Button 
+                      className={`w-full bg-gradient-to-r ${feature.color} hover:opacity-90 border-0 text-white font-semibold transition-opacity duration-200`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        feature.action();
+                      }}
+                    >
+                      {feature.actionText}
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
+      </motion.section>
+
+      {/* Interactive Platform Overview */}
+      <motion.section 
+        className="mb-32"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent">
+            How It Works
+          </h2>
+          <motion.p
+            className="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            viewport={{ once: true }}
+          >
+            Simple 3-step process to transform your career
+          </motion.p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Left Column - Core Features */}
+          <div className="space-y-6">
+            {[
+              {
+                icon: Brain,
+                title: "AI Resume Analysis",
+                desc: "Get instant ATS compatibility scores and optimization suggestions",
+                action: () => navigate('/ats-checker'),
+                color: "from-blue-500 to-cyan-500"
+              },
+              {
+                icon: Target,
+                title: "Job Matching Engine",
+                desc: "Find perfect job matches based on your skills and experience",
+                action: () => navigate('/job-analysis'),
+                color: "from-purple-500 to-pink-500"
+              },
+              {
+                icon: TrendingUp,
+                title: "Career Roadmaps",
+                desc: "Plan your career progression with personalized milestones",
+                action: () => navigate('/career'),
+                color: "from-green-500 to-emerald-500"
+              }
+            ].map((item, index) => {
+              const IconComponent = item.icon;
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.2, duration: 0.6 }}
-                >
-                  {statsInView && (
-                    <CountUp
-                      end={stat.number}
-                      duration={2}
-                      delay={index * 0.2}
-                      decimals={stat.number % 1 !== 0 ? 1 : 0}
-                    />
-                  )}
-                  {stat.suffix}
-                </motion.div>
-                <div className="text-blue-200 font-medium">{stat.label}</div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
-
-      {/* Professional Features Section */}
-      <ProfessionalFeatures onGetStarted={() => navigate('/ats-checker')} />
-      
-      {/* Demo Section */}
-      <DemoSection onGetStarted={() => navigate('/ats-checker')} />
-      
-
-      
-      <div className="max-w-7xl mx-auto px-4 py-12 relative z-10">
-
-        {/* How It Works - Enhanced Animated */}
-        <motion.div 
-          className="text-center mb-20 relative"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-        >
-          {/* Animated Background Elements */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute w-2 h-2 bg-blue-400/20 rounded-full"
-                style={{
-                  left: `${20 + i * 15}%`,
-                  top: `${30 + (i % 2) * 40}%`,
-                }}
-                animate={{
-                  y: [0, -20, 0],
-                  opacity: [0.2, 0.8, 0.2],
-                  scale: [1, 1.5, 1]
-                }}
-                transition={{
-                  duration: 3 + i * 0.5,
-                  repeat: Infinity,
-                  delay: i * 0.4
-                }}
-              />
-            ))}
-          </div>
-
-          <ShinyText 
-            className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent relative z-10"
-            speed={3}
-            shimmerWidth={100}
-          >
-            From Upload to Interview in 4 Simple Steps
-          </ShinyText>
-          
-          <motion.p
-            className="text-gray-300 mb-12 max-w-2xl mx-auto relative z-10"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            viewport={{ once: true }}
-          >
-            Watch your resume transform with our proven 4-step process that gets results
-          </motion.p>
-
-          {/* Animated Progress Line */}
-          <div className="relative mb-16">
-            <motion.div 
-              className="absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-green-500/30 transform -translate-y-1/2 hidden md:block"
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              transition={{ duration: 2, delay: 0.5 }}
-              viewport={{ once: true }}
-              style={{ originX: 0 }}
-            />
-            
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
-              {[
-                { 
-                  step: "1", 
-                  title: "Upload Your Resume", 
-                  desc: "Drag & drop PDF, DOCX, or paste text. Our parser extracts every detail with precision.", 
-                  color: "from-blue-500 to-cyan-500",
-                  icon: "📄",
-                  delay: 0.6,
-                  duration: "30 seconds"
-                },
-                { 
-                  step: "2", 
-                  title: "Add Job Description", 
-                  desc: "Paste the target job posting. Our AI identifies required skills and keywords instantly.", 
-                  color: "from-purple-500 to-pink-500",
-                  icon: "🎯",
-                  delay: 0.9,
-                  duration: "1 minute"
-                },
-                { 
-                  step: "3", 
-                  title: "Get AI Analysis", 
-                  desc: "Watch real-time analysis with animated scoring and improvement recommendations.", 
-                  color: "from-green-500 to-emerald-500",
-                  icon: "🤖",
-                  delay: 1.2,
-                  duration: "2 minutes"
-                },
-                { 
-                  step: "4", 
-                  title: "Download Optimized Resume", 
-                  desc: "Get your refined resume with side-by-side comparison showing score improvements.", 
-                  color: "from-orange-500 to-red-500",
-                  icon: "✨",
-                  delay: 1.5,
-                  duration: "Instant"
-                }
-              ].map((item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 50, scale: 0.8 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ 
-                    delay: item.delay, 
-                    duration: 0.8,
-                    type: "spring",
-                    stiffness: 100
-                  }}
                   viewport={{ once: true }}
-                  whileHover={{ 
-                    scale: 1.05, 
-                    rotateY: 5,
-                    rotateX: 5,
-                    y: -10
-                  }}
-                  style={{ transformStyle: "preserve-3d" }}
-                  className="group"
+                  whileHover={{ x: 5 }}
+                  className="group cursor-pointer"
+                  onClick={item.action}
                 >
-                  <Card className="text-center border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm overflow-hidden relative h-full">
-                    {/* Animated Background Gradient */}
-                    <motion.div
-                      className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
-                    />
-                    
-                    {/* Floating Particles */}
-                    <div className="absolute inset-0 overflow-hidden">
-                      {Array.from({ length: 3 }).map((_, i) => (
-                        <motion.div
-                          key={i}
-                          className="absolute w-1 h-1 bg-white/30 rounded-full"
-                          style={{
-                            left: `${20 + i * 30}%`,
-                            top: `${20 + i * 20}%`,
-                          }}
-                          animate={{
-                            y: [0, -15, 0],
-                            opacity: [0.3, 0.8, 0.3]
-                          }}
-                          transition={{
-                            duration: 2 + i * 0.5,
-                            repeat: Infinity,
-                            delay: index * 0.2 + i * 0.3
-                          }}
-                        />
-                      ))}
+                  <Card className="p-6 bg-gradient-to-r from-white/10 to-white/5 border-white/20 backdrop-blur-sm hover:from-white/15 hover:to-white/10 transition-all duration-300">
+                    <div className="flex items-center space-x-4">
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center transition-transform duration-200 group-hover:scale-110`}>
+                        <IconComponent className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
+                        <p className="text-blue-100 text-sm">{item.desc}</p>
+                      </div>
+                      <ArrowRight className="w-5 h-5 text-blue-300 group-hover:text-white transition-colors" />
                     </div>
-
-                    <CardContent className="pt-8 pb-8 relative z-10">
-                      {/* Step Number with Icon */}
-                      <motion.div 
-                        className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${item.color} text-white flex flex-col items-center justify-center mx-auto mb-6 shadow-2xl relative overflow-hidden`}
-                        whileHover={{ rotate: 360, scale: 1.15 }}
-                        transition={{ duration: 0.8, type: "spring" }}
-                      >
-                        {/* Animated Ring */}
-                        <motion.div
-                          className="absolute inset-0 border-2 border-white/30 rounded-2xl"
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                        />
-                        
-                        <motion.div 
-                          className="text-2xl mb-1"
-                          animate={{ 
-                            scale: [1, 1.2, 1],
-                            rotate: [0, 5, -5, 0]
-                          }}
-                          transition={{ 
-                            duration: 2, 
-                            repeat: Infinity,
-                            delay: index * 0.5
-                          }}
-                        >
-                          {item.icon}
-                        </motion.div>
-                        <div className="text-sm font-bold">{item.step}</div>
-                      </motion.div>
-                      
-                      {/* Title with Typing Effect */}
-                      <motion.h3 
-                        className="font-bold text-xl mb-4 text-white"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ delay: item.delay + 0.3, duration: 0.6 }}
-                        viewport={{ once: true }}
-                      >
-                        {item.title}
-                      </motion.h3>
-                      
-                      {/* Description with Stagger */}
-                      <motion.p 
-                        className="text-sm text-blue-100 leading-relaxed mb-2"
-                        initial={{ opacity: 0, y: 15 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: item.delay + 0.5, duration: 0.6 }}
-                        viewport={{ once: true }}
-                      >
-                        {item.desc}
-                      </motion.p>
-                      
-                      <motion.div
-                        className="text-xs text-cyan-300 font-medium bg-cyan-500/10 px-2 py-1 rounded-full inline-block"
-                        initial={{ opacity: 0, scale: 0 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: item.delay + 0.7, duration: 0.4 }}
-                        viewport={{ once: true }}
-                      >
-                        ⏱️ {item.duration}
-                      </motion.div>
-
-                      {/* Step Connection Arrow */}
-                      {index < 3 && (
-                        <motion.div
-                          className="absolute -right-4 top-1/2 transform -translate-y-1/2 hidden md:block"
-                          initial={{ opacity: 0, x: -10 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          transition={{ delay: item.delay + 0.8, duration: 0.5 }}
-                          viewport={{ once: true }}
-                        >
-                          <motion.div
-                            animate={{ x: [0, 5, 0] }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                            className="text-white/50 text-2xl"
-                          >
-                            →
-                          </motion.div>
-                        </motion.div>
-                      )}
-                    </CardContent>
                   </Card>
                 </motion.div>
-              ))}
-            </div>
+              );
+            })}
           </div>
 
-          {/* Call to Action with Pulse Animation */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 2, duration: 0.8, type: "spring" }}
-            viewport={{ once: true }}
-            className="relative z-10"
-          >
-            <motion.div
-              animate={{ 
-                boxShadow: [
-                  "0 0 0 0 rgba(59, 130, 246, 0.7)",
-                  "0 0 0 20px rgba(59, 130, 246, 0)"
-                ]
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="inline-block rounded-full"
-            >
-              <Button
-                onClick={() => navigate('/ats-checker')}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold shadow-2xl"
-              >
-                <motion.span
-                  animate={{ scale: [1, 1.05, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  Start Your Journey
-                </motion.span>
-                <motion.div
-                  className="ml-2"
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  <ArrowRight className="w-5 h-5" />
-                </motion.div>
-              </Button>
-            </motion.div>
-          </motion.div>
-        </motion.div>
-
-        {/* CTA Section */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-        >
-          <Card className="border border-white/30 shadow-2xl bg-gradient-to-r from-white/20 via-blue-500/20 to-purple-500/20 backdrop-blur-sm overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 animate-gradient-x" />
-            
-            <CardContent className="text-center py-16 relative z-10">
-              <ShinyText 
-                className="text-3xl md:text-4xl font-bold mb-6 text-white"
-                speed={2.8}
-                shimmerWidth={90}
-              >
-                Ready to Land Your Dream Job?
-              </ShinyText>
-              
-              <motion.p 
-                className="text-blue-100 mb-10 text-lg max-w-3xl mx-auto leading-relaxed"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                viewport={{ once: true }}
-              >
-                Stop letting ATS systems filter out your potential. Join 50,000+ professionals who've transformed their careers with ResumeFit.
-              </motion.p>
-              
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                viewport={{ once: true }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button 
-                  size="lg" 
-                  onClick={() => navigate('/ats-checker')}
-                  className="group px-12 py-6 text-lg bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary shadow-2xl hover:shadow-primary/25 transition-all duration-300"
-                >
-                  <Users className="w-5 h-5 mr-2" />
-                  Analyze My Resume Free
-                  <motion.div
-                    className="ml-2"
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  >
-                    <ArrowRight className="w-5 h-5" />
-                  </motion.div>
-                </Button>
-              </motion.div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      
-
-
-      {/* Professional Features Section */}
-      <ProfessionalFeatures onGetStarted={() => navigate('/ats-checker')} />
-      
-      {/* Demo Section */}
-      <DemoSection onGetStarted={() => navigate('/ats-checker')} />
-      
-      <div className="max-w-7xl mx-auto px-4 py-12 relative z-10">
-        {/* How It Works - Enhanced Animated */}
-        <motion.div 
-          className="text-center mb-20 relative"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-        >
-          {/* Animated Background Elements */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute w-2 h-2 bg-blue-400/20 rounded-full"
-                style={{
-                  left: `${20 + i * 15}%`,
-                  top: `${30 + (i % 2) * 40}%`,
-                }}
-                animate={{
-                  y: [0, -20, 0],
-                  opacity: [0.2, 0.8, 0.2],
-                  scale: [1, 1.5, 1]
-                }}
-                transition={{
-                  duration: 3 + i * 0.5,
-                  repeat: Infinity,
-                  delay: i * 0.4
-                }}
-              />
-            ))}
-          </div>
-
-          <ShinyText 
-            className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent relative z-10"
-            speed={3}
-            shimmerWidth={100}
-          >
-            From Upload to Interview in 4 Simple Steps
-          </ShinyText>
-          
-          <motion.p
-            className="text-gray-300 mb-12 max-w-2xl mx-auto relative z-10"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            viewport={{ once: true }}
-          >
-            Watch your resume transform with our proven 4-step process that gets results
-          </motion.p>
-
-          {/* Animated Progress Line */}
-          <div className="relative mb-16">
-            <motion.div 
-              className="absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-green-500/30 transform -translate-y-1/2 hidden md:block"
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              transition={{ duration: 2, delay: 0.5 }}
-              viewport={{ once: true }}
-              style={{ originX: 0 }}
-            />
-            
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
-              {[
-                { 
-                  step: "1", 
-                  title: "Upload Your Resume", 
-                  desc: "Drag & drop PDF, DOCX, or paste text. Our parser extracts every detail with precision.", 
-                  color: "from-blue-500 to-cyan-500",
-                  icon: "📄",
-                  delay: 0.6,
-                  duration: "30 seconds"
-                },
-                { 
-                  step: "2", 
-                  title: "Add Job Description", 
-                  desc: "Paste the target job posting. Our AI identifies required skills and keywords instantly.", 
-                  color: "from-purple-500 to-pink-500",
-                  icon: "🎯",
-                  delay: 0.9,
-                  duration: "1 minute"
-                },
-                { 
-                  step: "3", 
-                  title: "Get AI Analysis", 
-                  desc: "Watch real-time analysis with animated scoring and improvement recommendations.", 
-                  color: "from-green-500 to-emerald-500",
-                  icon: "🤖",
-                  delay: 1.2,
-                  duration: "2 minutes"
-                },
-                { 
-                  step: "4", 
-                  title: "Download Optimized Resume", 
-                  desc: "Get your refined resume with side-by-side comparison showing score improvements.", 
-                  color: "from-orange-500 to-red-500",
-                  icon: "✨",
-                  delay: 1.5,
-                  duration: "Instant"
-                }
-              ].map((item, index) => (
+          {/* Right Column - Advanced Features */}
+          <div className="space-y-6">
+            {[
+              {
+                icon: Users,
+                title: "Interview Practice",
+                desc: "Mock interviews with AI feedback and company-specific prep",
+                action: () => navigate('/interview-prep'),
+                color: "from-orange-500 to-red-500"
+              },
+              {
+                icon: BarChart3,
+                title: "Progress Analytics",
+                desc: "Track your improvement with detailed performance metrics",
+                action: () => navigate('/analytics'),
+                color: "from-indigo-500 to-purple-500"
+              },
+              {
+                icon: FileText,
+                title: "Professional Templates",
+                desc: "ATS-optimized resume templates designed by experts",
+                action: () => navigate('/templates'),
+                color: "from-pink-500 to-rose-500"
+              }
+            ].map((item, index) => {
+              const IconComponent = item.icon;
+              return (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 50, scale: 0.8 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ 
-                    delay: item.delay, 
-                    duration: 0.8,
-                    type: "spring",
-                    stiffness: 100
-                  }}
+                  initial={{ opacity: 0, x: 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.2, duration: 0.6 }}
                   viewport={{ once: true }}
-                  whileHover={{ 
-                    scale: 1.05, 
-                    rotateY: 5,
-                    rotateX: 5,
-                    y: -10
-                  }}
-                  style={{ transformStyle: "preserve-3d" }}
-                  className="group"
+                  whileHover={{ x: -5 }}
+                  className="group cursor-pointer"
+                  onClick={item.action}
                 >
-                  <Card className="text-center border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm overflow-hidden relative h-full">
-                    {/* Animated Background Gradient */}
-                    <motion.div
-                      className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
-                    />
-                    
-                    {/* Floating Particles */}
-                    <div className="absolute inset-0 overflow-hidden">
-                      {Array.from({ length: 3 }).map((_, i) => (
-                        <motion.div
-                          key={i}
-                          className="absolute w-1 h-1 bg-white/30 rounded-full"
-                          style={{
-                            left: `${20 + i * 30}%`,
-                            top: `${20 + i * 20}%`,
-                          }}
-                          animate={{
-                            y: [0, -15, 0],
-                            opacity: [0.3, 0.8, 0.3]
-                          }}
-                          transition={{
-                            duration: 2 + i * 0.5,
-                            repeat: Infinity,
-                            delay: index * 0.2 + i * 0.3
-                          }}
-                        />
-                      ))}
+                  <Card className="p-6 bg-gradient-to-l from-white/10 to-white/5 border-white/20 backdrop-blur-sm hover:from-white/15 hover:to-white/10 transition-all duration-300">
+                    <div className="flex items-center space-x-4">
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center transition-transform duration-200 group-hover:scale-110`}>
+                        <IconComponent className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
+                        <p className="text-blue-100 text-sm">{item.desc}</p>
+                      </div>
+                      <ArrowRight className="w-5 h-5 text-blue-300 group-hover:text-white transition-colors" />
                     </div>
-
-                    <CardContent className="pt-8 pb-8 relative z-10">
-                      {/* Step Number with Icon */}
-                      <motion.div 
-                        className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${item.color} text-white flex flex-col items-center justify-center mx-auto mb-6 shadow-2xl relative overflow-hidden`}
-                        whileHover={{ rotate: 360, scale: 1.15 }}
-                        transition={{ duration: 0.8, type: "spring" }}
-                      >
-                        {/* Animated Ring */}
-                        <motion.div
-                          className="absolute inset-0 border-2 border-white/30 rounded-2xl"
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                        />
-                        
-                        <motion.div 
-                          className="text-2xl mb-1"
-                          animate={{ 
-                            scale: [1, 1.2, 1],
-                            rotate: [0, 5, -5, 0]
-                          }}
-                          transition={{ 
-                            duration: 2, 
-                            repeat: Infinity,
-                            delay: index * 0.5
-                          }}
-                        >
-                          {item.icon}
-                        </motion.div>
-                        <div className="text-sm font-bold">{item.step}</div>
-                      </motion.div>
-                      
-                      {/* Title with Typing Effect */}
-                      <motion.h3 
-                        className="font-bold text-xl mb-4 text-white"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ delay: item.delay + 0.3, duration: 0.6 }}
-                        viewport={{ once: true }}
-                      >
-                        {item.title}
-                      </motion.h3>
-                      
-                      {/* Description with Stagger */}
-                      <motion.p 
-                        className="text-sm text-blue-100 leading-relaxed mb-2"
-                        initial={{ opacity: 0, y: 15 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: item.delay + 0.5, duration: 0.6 }}
-                        viewport={{ once: true }}
-                      >
-                        {item.desc}
-                      </motion.p>
-                      
-                      <motion.div
-                        className="text-xs text-cyan-300 font-medium bg-cyan-500/10 px-2 py-1 rounded-full inline-block"
-                        initial={{ opacity: 0, scale: 0 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: item.delay + 0.7, duration: 0.4 }}
-                        viewport={{ once: true }}
-                      >
-                        ⏱️ {item.duration}
-                      </motion.div>
-
-                      {/* Step Connection Arrow */}
-                      {index < 3 && (
-                        <motion.div
-                          className="absolute -right-4 top-1/2 transform -translate-y-1/2 hidden md:block"
-                          initial={{ opacity: 0, x: -10 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          transition={{ delay: item.delay + 0.8, duration: 0.5 }}
-                          viewport={{ once: true }}
-                        >
-                          <motion.div
-                            animate={{ x: [0, 5, 0] }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                            className="text-white/50 text-2xl"
-                          >
-                            →
-                          </motion.div>
-                        </motion.div>
-                      )}
-                    </CardContent>
                   </Card>
                 </motion.div>
-              ))}
-            </div>
+              );
+            })}
           </div>
+        </div>
 
-          {/* Call to Action with Pulse Animation */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 2, duration: 0.8, type: "spring" }}
-            viewport={{ once: true }}
-            className="relative z-10"
-          >
-            <motion.div
-              animate={{ 
-                boxShadow: [
-                  "0 0 0 0 rgba(59, 130, 246, 0.7)",
-                  "0 0 0 20px rgba(59, 130, 246, 0)"
-                ]
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="inline-block rounded-full"
-            >
-              <Button
-                onClick={() => navigate('/ats-checker')}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold shadow-2xl"
-              >
-                <motion.span
-                  animate={{ scale: [1, 1.05, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  Start Your Journey
-                </motion.span>
-                <motion.div
-                  className="ml-2"
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  <ArrowRight className="w-5 h-5" />
-                </motion.div>
-              </Button>
-            </motion.div>
-          </motion.div>
-        </motion.div>
-
-        {/* CTA Section */}
+        {/* Quick Action Center */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
+          className="mt-16 text-center"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8, duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <Card className="border border-white/30 shadow-2xl bg-gradient-to-r from-white/20 via-blue-500/20 to-purple-500/20 backdrop-blur-sm overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 animate-gradient-x" />
-            
-            <CardContent className="text-center py-16 relative z-10">
-              <ShinyText 
-                className="text-3xl md:text-4xl font-bold mb-6 text-white"
-                speed={2.8}
-                shimmerWidth={90}
+          <Card className="p-8 bg-gradient-to-r from-white/10 via-blue-500/10 to-purple-500/10 border-white/20 backdrop-blur-sm">
+            <h3 className="text-2xl font-bold text-white mb-6">Start Your Career Transformation</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Button 
+                className="bg-gradient-to-r from-blue-600 to-purple-700 hover:from-blue-700 hover:to-purple-800 text-white font-semibold py-3"
+                onClick={() => navigate('/ats-checker')}
               >
-                Ready to Land Your Dream Job?
-              </ShinyText>
-              
-              <motion.p 
-                className="text-blue-100 mb-10 text-lg max-w-3xl mx-auto leading-relaxed"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                viewport={{ once: true }}
+                <Brain className="w-5 h-5 mr-2" />
+                Analyze Resume
+              </Button>
+              <Button 
+                variant="outline"
+                className="border-white/30 text-white hover:bg-white/10 font-semibold py-3"
+                onClick={() => navigate('/job-analysis')}
               >
-                Stop letting ATS systems filter out your potential. Join 50,000+ professionals who've transformed their careers with ResumeFit.
-              </motion.p>
-              
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                viewport={{ once: true }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                <Target className="w-5 h-5 mr-2" />
+                Find Jobs
+              </Button>
+              <Button 
+                variant="outline"
+                className="border-white/30 text-white hover:bg-white/10 font-semibold py-3"
+                onClick={() => navigate('/interview-prep')}
               >
-                <Button 
-                  size="lg" 
-                  onClick={() => navigate('/ats-checker')}
-                  className="group px-12 py-6 text-lg bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary shadow-2xl hover:shadow-primary/25 transition-all duration-300"
-                >
-                  <Users className="w-5 h-5 mr-2" />
-                  Analyze My Resume Free
-                  <motion.div
-                    className="ml-2"
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  >
-                    <ArrowRight className="w-5 h-5" />
-                  </motion.div>
-                </Button>
-              </motion.div>
-            </CardContent>
+                <Users className="w-5 h-5 mr-2" />
+                Practice Interview
+              </Button>
+            </div>
           </Card>
         </motion.div>
-      </div>
-      </div>
+      </motion.section>
+
+      {/* Final CTA - Optimized */}
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+        className="text-center"
+      >
+        <Card className="border border-white/30 shadow-2xl bg-gradient-to-br from-white/10 via-blue-500/10 to-purple-500/10 backdrop-blur-sm overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5" />
+          
+          <CardContent className="py-16 relative z-10">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
+              Ready to Transform Your Career?
+            </h2>
+            
+            <p className="text-xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed">
+              Join 75,000+ professionals who've accelerated their careers with AI-powered insights
+            </p>
+            
+            <div className="space-y-6">
+              <Button 
+                size="lg" 
+                onClick={() => navigate('/ats-checker')}
+                className="px-12 py-6 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-700 hover:from-blue-700 hover:to-purple-800 shadow-2xl border-0 rounded-2xl transition-all duration-300 hover:scale-105"
+              >
+                <Sparkles className="w-6 h-6 mr-3" />
+                Start Free Analysis
+                <ArrowRight className="w-6 h-6 ml-3" />
+              </Button>
+              
+              <div className="flex flex-wrap items-center justify-center gap-6 text-blue-200 text-sm">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span>100% Free</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span>No Sign-up Required</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span>Instant Results</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.section>
     </>
   );
 }

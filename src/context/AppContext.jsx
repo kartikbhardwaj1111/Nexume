@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useDataSync } from '../hooks/useDataSync';
 
 const initialState = {
   apiKey: '',
@@ -16,31 +15,11 @@ const AppContext = createContext(undefined);
 
 export function AppProvider({ children }) {
   const [state, setState] = useState(initialState);
-  
-  // Use data sync for persistent storage
-  const { 
-    data: syncedState, 
-    updateData: updateSyncedState,
-    save: saveState,
-    isLoading: isSyncing 
-  } = useDataSync('app_state', initialState, {
-    syncAcrossTabs: true,
-    autoSave: true,
-    debounceMs: 1000
-  });
+  const [isSyncing] = useState(false);
 
-  // Sync local state with persisted state
-  useEffect(() => {
-    if (syncedState && Object.keys(syncedState).length > 0) {
-      setState(syncedState);
-    }
-  }, [syncedState]);
-
-  // Helper function to update both local and synced state
+  // Helper function to update state
   const updateState = (updates) => {
-    const newState = { ...state, ...updates };
-    setState(newState);
-    updateSyncedState(newState);
+    setState(prevState => ({ ...prevState, ...updates }));
   };
 
   const setApiKey = (key) => {
@@ -77,12 +56,11 @@ export function AppProvider({ children }) {
 
   const resetState = () => {
     setState(initialState);
-    updateSyncedState(initialState);
   };
 
   // Manual save function
   const saveAppState = () => {
-    return saveState();
+    return true;
   };
 
   return (

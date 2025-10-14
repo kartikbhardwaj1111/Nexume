@@ -8,6 +8,7 @@ import { Badge } from '../components/ui/badge';
 import { Separator } from '../components/ui/separator';
 import JobUrlInput from '../components/JobUrlInput';
 import JobPreview from '../components/JobPreview';
+import { SmartJobFinder } from '../components/SmartJobFinder';
 import { 
   Briefcase,
   FileText,
@@ -181,48 +182,62 @@ const JobAnalysisPage = () => {
     );
   };
 
-  const renderInputStep = () => (
-    <div className="space-y-6">
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold">Job-Tailored Resume Analysis</h1>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          Get personalized recommendations by analyzing your resume against a specific job posting. 
-          Enter a job URL or paste the job description to get started.
-        </p>
+  const renderInputStep = () => {
+    // Extract skills from resume data if available
+    const resumeSkills = resumeData?.skills || resumeData?.keywords || [];
+    
+    return (
+      <div className="space-y-8">
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-bold">Job-Tailored Resume Analysis</h1>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Get personalized recommendations by analyzing your resume against a specific job posting. 
+            Enter a job URL or paste the job description to get started.
+          </p>
+        </div>
+
+        <JobUrlInput
+          onJobExtracted={handleJobExtracted}
+          onError={handleError}
+          isLoading={isLoading}
+        />
+
+        {error && (
+          <Alert className="border-red-500">
+            <AlertTriangle className="h-4 w-4 text-red-600" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        {!resumeData && (
+          <Alert>
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              <div className="space-y-2">
+                <p>No resume detected. You'll need to upload your resume for job-tailored analysis.</p>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate('/resume')}
+                >
+                  Upload Resume First
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Job Matching Section */}
+        <div className="mt-12">
+          <Separator className="mb-8" />
+          <SmartJobFinder 
+            resumeSkills={resumeSkills}
+            className="w-full"
+          />
+        </div>
       </div>
-
-      <JobUrlInput
-        onJobExtracted={handleJobExtracted}
-        onError={handleError}
-        isLoading={isLoading}
-      />
-
-      {error && (
-        <Alert className="border-red-500">
-          <AlertTriangle className="h-4 w-4 text-red-600" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      {!resumeData && (
-        <Alert>
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            <div className="space-y-2">
-              <p>No resume detected. You'll need to upload your resume for job-tailored analysis.</p>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => navigate('/resume')}
-              >
-                Upload Resume First
-              </Button>
-            </div>
-          </AlertDescription>
-        </Alert>
-      )}
-    </div>
-  );
+    );
+  };
 
   const renderPreviewStep = () => (
     <div className="space-y-6">
@@ -301,7 +316,7 @@ const JobAnalysisPage = () => {
   return (
     <Layout customBreadcrumbs={[
       { path: '/', label: 'Home' },
-      { path: '/job-analysis', label: 'Job Analysis' }
+      { path: '/job-analysis', label: 'Find Matching Jobs' }
     ]}>
       <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
         <div className="container mx-auto px-4 py-8">

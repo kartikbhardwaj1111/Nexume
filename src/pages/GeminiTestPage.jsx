@@ -44,7 +44,7 @@ const GeminiTestPage = () => {
                   Gemini API Key
                 </div>
                 <div className="text-sm text-blue-700 dark:text-blue-300 font-mono">
-                  AIzaSyCNykRjQSU-nipzfu40UgvpG0z3j-A0Z0s
+                  AIzaSyBWH2FNzI1b-d35GD8Wz-tfLphVVIrG2u8
                 </div>
                 <Badge className="mt-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                   Configured

@@ -1,16 +1,13 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+
+import { TooltipProvider } from "./components/ui/tooltip";
+import { Toaster } from "sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import React, { Suspense, lazy } from "react";
 import { AppProvider } from "./context/AppContext";
 import { ThemeProvider } from "./components/ThemeProvider";
-import { initializeServices } from "./services";
-import { FeatureIntegrationService } from "./services/integration/FeatureIntegrationService";
-import OfflineIndicator from "./components/OfflineIndicator";
-import { initializeOptimizations } from "./utils/performanceOptimizer";
-import "./utils/serviceWorker"; // Initialize service worker
+import SimpleErrorBoundary from "./components/SimpleErrorBoundary";
+
 
 // Lazy load all major feature pages
 const Index = lazy(() => import("./pages/Index"));
@@ -28,23 +25,6 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
-// Initialize services and optimizations on app startup
-Promise.all([
-  initializeServices(),
-  initializeOptimizations()
-]).then(([servicesSuccess]) => {
-  if (servicesSuccess) {
-    console.log('🚀 Career Acceleration Platform ready!');
-    
-    // Initialize feature integration service
-    window.featureIntegration = new FeatureIntegrationService();
-    console.log('🔗 Feature integration service initialized');
-    console.log('⚡ Performance optimizations active');
-  } else {
-    console.warn('⚠️ Some services may not be available');
-  }
-});
-
 // Loading component for lazy-loaded routes
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -52,36 +32,43 @@ const PageLoader = () => (
   </div>
 );
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <ThemeProvider defaultTheme="dark" storageKey="nexume-ui-theme">
-        <AppProvider>
-        <Toaster />
-        <Sonner />
-        <OfflineIndicator />
-        <BrowserRouter>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/ats-checker" element={<ATSChecker />} />
-              <Route path="/api-key" element={<ApiKeyPage />} />
-              <Route path="/resume" element={<ResumePage />} />
-              <Route path="/job-description" element={<JobDescriptionPage />} />
-              <Route path="/job-analysis" element={<JobAnalysisPage />} />
-              <Route path="/report" element={<ReportPage />} />
-              <Route path="/analytics" element={<AnalyticsPage />} />
-              <Route path="/career" element={<CareerPage />} />
-              <Route path="/templates" element={<TemplatesPage />} />
-              <Route path="/interview-prep" element={<InterviewPrepPage />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-      </AppProvider>
-      </ThemeProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  // Initialize app
+  React.useEffect(() => {
+    console.log('🚀 Nexume - AI-Powered Career Platform loaded!');
+  }, []);
+
+  return (
+    <SimpleErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <ThemeProvider defaultTheme="dark" storageKey="nexume-ui-theme">
+            <AppProvider>
+              <Toaster position="top-right" />
+              <BrowserRouter>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/ats-checker" element={<ATSChecker />} />
+                  <Route path="/api-key" element={<ApiKeyPage />} />
+                  <Route path="/resume" element={<ResumePage />} />
+                  <Route path="/job-description" element={<JobDescriptionPage />} />
+                  <Route path="/job-analysis" element={<JobAnalysisPage />} />
+                  <Route path="/report" element={<ReportPage />} />
+                  <Route path="/analytics" element={<AnalyticsPage />} />
+                  <Route path="/career" element={<CareerPage />} />
+                  <Route path="/templates" element={<TemplatesPage />} />
+                  <Route path="/interview-prep" element={<InterviewPrepPage />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </BrowserRouter>
+          </AppProvider>
+          </ThemeProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </SimpleErrorBoundary>
+  );
+};
 
 export default App;

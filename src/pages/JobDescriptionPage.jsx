@@ -25,6 +25,14 @@ export default function JobDescriptionPage() {
     setKeywordCount(keywords.length);
   };
 
+  const handlePaste = (e) => {
+    // Ensure paste event works properly
+    e.preventDefault();
+    const pastedText = e.clipboardData.getData('text');
+    setJobInput(pastedText);
+    analyzeJobDescription(pastedText);
+  };
+
   const handleContinue = () => {
     if (!jobInput.trim()) {
       return;
@@ -174,6 +182,7 @@ export default function JobDescriptionPage() {
                     setJobInput(e.target.value);
                     analyzeJobDescription(e.target.value);
                   }}
+                  onPaste={handlePaste}
                   className="min-h-[500px] resize-none transition-all duration-200 focus:ring-2 focus:ring-primary/50 text-base leading-relaxed border-primary/20"
                 />
               </motion.div>

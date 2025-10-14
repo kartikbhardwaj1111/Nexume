@@ -63,11 +63,11 @@ const Breadcrumb = ({ customBreadcrumbs = null }) => {
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="bg-white/5 backdrop-blur-sm border-b border-white/10 py-3"
+      className="bg-black/10 backdrop-blur-sm border-b border-white/5 py-2"
       aria-label="Breadcrumb"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ol className="flex items-center space-x-2 text-sm">
+        <ol className="flex items-center space-x-2 text-xs">
           {breadcrumbs.map((breadcrumb, index) => {
             const isLast = index === breadcrumbs.length - 1;
             const isFirst = index === 0;
@@ -79,8 +79,7 @@ const Breadcrumb = ({ customBreadcrumbs = null }) => {
                 )}
                 
                 {isLast ? (
-                  <span className="text-white font-medium flex items-center">
-                    {isFirst && <Home className="w-4 h-4 mr-1" />}
+                  <span className="text-white/80 font-medium flex items-center">
                     {breadcrumb.label}
                   </span>
                 ) : (
@@ -88,9 +87,8 @@ const Breadcrumb = ({ customBreadcrumbs = null }) => {
                     variant="ghost"
                     size="sm"
                     onClick={() => handleBreadcrumbClick(breadcrumb.path)}
-                    className="text-white/70 hover:text-white hover:bg-white/10 p-1 h-auto font-normal flex items-center"
+                    className="text-white/50 hover:text-white/80 hover:bg-white/5 p-1 h-auto font-normal flex items-center"
                   >
-                    {isFirst && <Home className="w-4 h-4 mr-1" />}
                     {breadcrumb.label}
                   </Button>
                 )}

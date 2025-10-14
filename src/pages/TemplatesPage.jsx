@@ -292,10 +292,10 @@ const TemplatesPage = () => {
             Ready to Build Your Resume?
           </h2>
           <p className="text-gray-600 mb-6">
-            Select a template above or start with our AI-powered resume builder
+            Select a template above or start with our AI-powered resume analyzer
           </p>
           <div className="flex gap-4 justify-center">
-            <Button onClick={() => navigate('/resume')}>
+            <Button onClick={() => navigate('/ats-checker')}>
               Start Building
             </Button>
             <Button variant="outline" onClick={() => navigate('/ats-checker')}>

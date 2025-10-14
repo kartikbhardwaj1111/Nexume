@@ -11,11 +11,17 @@
     "build": "vite build && node scripts/optimize-build.js",
     "build:dev": "vite build --mode development",
     "build:analyze": "vite build && node scripts/optimize-build.js && npm run preview",
+    "build:optimized": "vite build --mode production && node scripts/optimize-build.js",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "test": "vitest --run",
     "test:watch": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "analyze": "npm run build:analyze",
+    "clean": "rm -rf dist node_modules/.vite",
+    "setup": "npm install && npm run build:dev"
   },
   "dependencies": {
     "@ai-sdk/google": "^1.2.22",
