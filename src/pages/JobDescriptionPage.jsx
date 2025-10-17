@@ -171,21 +171,79 @@ export default function JobDescriptionPage() {
             </CardHeader>
             
             <CardContent className="relative z-10">
-              <motion.div
-                whileFocus={{ scale: 1.01 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <Textarea
-                  placeholder="Paste the job description here...\n\nExample:\nSoftware Engineer - Frontend\n\nWe are looking for a skilled Frontend Developer with 3+ years of experience in React, JavaScript, and modern web technologies.\n\nRequirements:\n• Bachelor's degree in Computer Science\n• 3+ years of React development\n• Experience with TypeScript, Node.js\n• Knowledge of Git, CI/CD pipelines\n• Strong problem-solving skills..."
-                  value={jobInput}
-                  onChange={(e) => {
-                    setJobInput(e.target.value);
-                    analyzeJobDescription(e.target.value);
-                  }}
-                  onPaste={handlePaste}
-                  className="min-h-[500px] resize-none transition-all duration-200 focus:ring-2 focus:ring-primary/50 text-base leading-relaxed border-primary/20"
-                />
-              </motion.div>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                    📝 Job Description Text
+                    <span className="text-xs text-muted-foreground bg-primary/10 px-2 py-1 rounded-full">
+                      Required
+                    </span>
+                  </label>
+                  {jobInput && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setJobInput('');
+                        setWordCount(0);
+                        setKeywordCount(0);
+                      }}
+                      className="text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      Clear
+                    </Button>
+                  )}
+                </div>
+                
+                <motion.div
+                  whileFocus={{ scale: 1.005 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className="relative"
+                >
+                  <Textarea
+                    placeholder="📋 Paste the complete job description here...\n\n💡 Example:\n\n🏢 Software Engineer - Frontend\n\nWe are looking for a skilled Frontend Developer with 3+ years of experience in React, JavaScript, and modern web technologies.\n\n✅ Requirements:\n• Bachelor's degree in Computer Science\n• 3+ years of React development experience\n• Experience with TypeScript, Node.js\n• Knowledge of Git, CI/CD pipelines\n• Strong problem-solving skills\n• Experience with REST APIs\n\n🎯 Responsibilities:\n• Develop responsive web applications\n• Collaborate with design team\n• Write clean, maintainable code\n• Participate in code reviews\n\n💰 Benefits:\n• Competitive salary\n• Health insurance\n• Remote work options"
+                    value={jobInput}
+                    onChange={(e) => {
+                      setJobInput(e.target.value);
+                      analyzeJobDescription(e.target.value);
+                    }}
+                    onPaste={handlePaste}
+                    className="min-h-[400px] resize-none transition-all duration-300 focus:ring-2 focus:ring-primary/50 text-base leading-relaxed border-2 border-primary/30 focus:border-primary/60 bg-white dark:bg-gray-900 rounded-xl p-4 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                    style={{ fontSize: '16px', lineHeight: '1.6', color: 'rgb(17, 24, 39)' }}
+                  />
+                  
+                  {!jobInput && (
+                    <div className="absolute top-4 right-4 text-xs text-muted-foreground bg-primary/10 px-3 py-1 rounded-full">
+                      Ctrl+V to paste
+                    </div>
+                  )}
+                  
+                  {jobInput && (
+                    <div className="absolute bottom-4 right-4 flex gap-2">
+                      <div className="text-xs text-muted-foreground bg-background/80 backdrop-blur-sm px-2 py-1 rounded-md border">
+                        {jobInput.length} chars
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+                
+                {!jobInput && (
+                  <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="text-blue-500 text-lg">💡</div>
+                      <div>
+                        <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">How to get the best results:</h4>
+                        <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+                          <li>• Copy the complete job posting from the company website</li>
+                          <li>• Include job title, requirements, responsibilities, and benefits</li>
+                          <li>• The more details you provide, the better our AI analysis will be</li>
+                          <li>• You can paste from LinkedIn, Indeed, company websites, etc.</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
               
               {jobInput && (
                 <motion.div

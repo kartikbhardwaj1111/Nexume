@@ -484,10 +484,17 @@ export function OptimizedATSChecker() {
                     Target Job Description
                   </label>
                   <textarea
-                    placeholder="Paste the job description here..."
+                    placeholder="📋 Paste the complete job description here...\n\n💡 Example:\n\nSoftware Engineer - Frontend\n\nWe are looking for a skilled Frontend Developer with 3+ years of experience in React, JavaScript, and modern web technologies.\n\nRequirements:\n• Bachelor's degree in Computer Science\n• 3+ years of React development\n• Experience with TypeScript, Node.js\n• Knowledge of Git, CI/CD pipelines\n• Strong problem-solving skills"
                     value={jobDescription}
                     onChange={(e) => setJobDescription(e.target.value)}
-                    className="w-full min-h-[300px] p-4 border rounded-lg resize-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full min-h-[300px] p-4 border-2 rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                    style={{ 
+                      backgroundColor: '#ffffff',
+                      color: '#000000',
+                      fontSize: '16px', 
+                      lineHeight: '1.6',
+                      border: '2px solid #e5e7eb'
+                    }}
                   />
                 </div>
 
