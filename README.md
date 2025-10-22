@@ -1,26 +1,14 @@
 <div align="center">
 
-# 🚀 **Nexume** - AI Career Acceleration Platform
+# 🚀 **Nexume** - AI-Powered Career Platform
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=28&duration=2000&pause=500&color=3B82F6&center=true&vCenter=true&width=800&lines=🎯+Transform+Resume+Into+Interview+Gold;⚡+30-Second+ATS+Analysis;🚀+95%25+Pass+Rate+Guaranteed;💼+50K%2B+Professionals+Trust+Us" alt="Animated Header" />
+<img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=28&duration=2000&pause=500&color=3B82F6&center=true&vCenter=true&width=800&lines=🎯+Transform+Resume+Into+Interview+Gold;⚡+30-Second+ATS+Analysis;🚀+95%25+Pass+Rate+Guaranteed;💼+75K%2B+Professionals+Trust+Us" alt="Animated Header" />
 
-[![Live Demo](https://img.shields.io/badge/🌟_LIVE_DEMO-FF6B6B?style=for-the-badge&logoColor=white)](https://nexume.app/)
+[![Live Demo](https://img.shields.io/badge/🌟_LIVE_DEMO-FF6B6B?style=for-the-badge&logoColor=white)](https://nexume-git-main-kartik-bhardwajs-projects-ce1937d6.vercel.app/)
 [![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=for-the-badge&logo=react)](https://reactjs.org/)
 [![AI Powered](https://img.shields.io/badge/AI_Powered-Google_Gemini-4285F4?style=for-the-badge&logo=google)](https://ai.google.dev/)
 
-</div>
-
----
-
-## ⚡ **Core Features**
-
-<div align="center">
-
-| 🎯 **Instant ATS Analysis** | 🔗 **Job URL Magic** | 📋 **Smart Templates** | 📈 **Career Tracker** | 🎤 **Mock Interviews** |
-|:---:|:---:|:---:|:---:|:---:|
-| No API keys needed | Paste any job link | ATS-optimized designs | Growth roadmaps | AI-powered practice |
-| 30-second results | Auto-extract requirements | Live customization | Skill gap analysis | Company-specific prep |
-| 95% pass rate | Tailored recommendations | Multi-format export | Salary insights | Performance analytics |
+<img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="900">
 
 </div>
 
@@ -32,10 +20,10 @@
 
 ```mermaid
 flowchart LR
-    A["📄<br/>Upload<br/>Resume"] --> B["🔗<br/>Add Job<br/>URL"]
-    B --> C["🤖<br/>AI<br/>Analysis"]
-    C --> D["📊<br/>Get<br/>Score"]
-    D --> E["✨<br/>Download<br/>Optimized"]
+    A[📄 Upload Resume] --> B[🔗 Add Job URL]
+    B --> C[🤖 AI Analysis]
+    C --> D[📊 Get Score]
+    D --> E[✨ Download Optimized]
     
     style A fill:#3B82F6,stroke:#1E40AF,color:#fff
     style B fill:#8B5CF6,stroke:#7C3AED,color:#fff
@@ -45,6 +33,20 @@ flowchart LR
 ```
 
 **Upload → Analyze → Optimize → Download → Get Hired**
+
+</div>
+
+---
+
+## ⚡ **Core Features**
+
+<div align="center">
+
+| 🎯 **ATS Analysis** | 🔗 **Job URL Magic** | 📋 **Smart Templates** | 📈 **Career Tracker** | 🎤 **Mock Interviews** |
+|:---:|:---:|:---:|:---:|:---:|
+| 30-second analysis | Paste any job link | 50+ ATS designs | Growth roadmaps | AI-powered practice |
+| 95% pass rate | Auto-extract requirements | Live customization | Skill gap analysis | Company-specific prep |
+| No setup required | Tailored recommendations | Multi-format export | Progress tracking | Performance analytics |
 
 </div>
 
@@ -86,7 +88,7 @@ flowchart LR
 
 ---
 
-## 📊 **Scoring System**
+## 📊 **ATS Scoring System**
 
 ```
 🎯 Skills Match        (40pts) ████████████████████████████████████████ 100%
@@ -147,11 +149,15 @@ npm run dev
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github)](https://github.com/kartikbhardwaj)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/kartikbhardwaj)
 
+</div>
+
 ---
+
+<div align="center">
 
 ### 🚀 **Ready to Land Your Dream Job?**
 
-[![Get Started](https://img.shields.io/badge/🚀_START_NOW-3B82F6?style=for-the-badge&logoColor=white)](https://nexume.app/)
+[![Get Started](https://img.shields.io/badge/🚀_START_NOW-3B82F6?style=for-the-badge&logoColor=white)](https://nexume-git-main-kartik-bhardwajs-projects-ce1937d6.vercel.app/)
 
 **Made with ❤️ for job seekers worldwide**
 
