@@ -111,7 +111,22 @@ npm install
 npm run dev
 ```
 
-**Tech Stack:** React 18 • Vite 5 • Tailwind CSS • Google AI • Framer Motion
+---
+
+## ⚙️ **Tech Stack**
+
+| **Layer** | **Tools / Libraries** |
+|:--|:--|
+| **Programming Language** | Python 3.11, JavaScript (ES6+) |
+| **Frontend (UI)** | React 18, Vite 5, Tailwind CSS, Framer Motion, Streamlit (for dashboards) |
+| **Backend (API)** | FastAPI, Node.js, Express, Pydantic, Uvicorn |
+| **AI / NLP / LLMs** | PyTorch, Transformers, SentenceTransformers, LangChain, Google Gemini API |
+| **RAG / Vector DB** | FAISS, ChromaDB |
+| **Data Engineering** | Pandas, SQLAlchemy, ETL Pipelines |
+| **Testing & QA** | Pytest, Postman |
+| **Deployment** | Docker, Render Cloud, GitHub Actions, Vercel |
+| **Version Control** | Git / GitHub |
+| **Other Tools** | Axios, ESLint, Prettier, REST + JSON APIs |
 
 ---
 
@@ -132,10 +147,10 @@ npm run dev
 
 ## 🔒 **Privacy First**
 
-- 🔐 **Encrypted** - All data protected
-- 🗑️ **Auto-delete** - Files removed in 24h
-- 🛡️ **GDPR compliant** - Privacy guaranteed
-- 🚫 **No tracking** - Anonymous usage
+- 🔐 **Encrypted** - All data protected  
+- 🗑️ **Auto-delete** - Files removed in 24h  
+- 🛡️ **GDPR compliant** - Privacy guaranteed  
+- 🚫 **No tracking** - Anonymous usage  
 
 ---
 
@@ -144,7 +159,7 @@ npm run dev
 <div align="center">
 
 **Kartik Bhardwaj**  
-*Full-Stack Developer & AI Enthusiast*
+*Full-Stack & AI Developer • Building Intelligent Career Tools*
 
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github)](https://github.com/kartikbhardwaj)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/kartikbhardwaj)
@@ -159,6 +174,6 @@ npm run dev
 
 [![Get Started](https://img.shields.io/badge/🚀_START_NOW-3B82F6?style=for-the-badge&logoColor=white)](https://nexume-git-main-kartik-bhardwajs-projects-ce1937d6.vercel.app/)
 
-**Made with ❤️ for job seekers worldwide**
+**Made with ❤️ using React, FastAPI, and LangChain**
 
 </div>
