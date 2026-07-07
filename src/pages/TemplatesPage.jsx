@@ -82,8 +82,8 @@ const TemplatesPage = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Templates</p>
-                <p className="text-2xl font-bold text-gray-900">{analytics.overview.totalTemplates}</p>
+                <p className="text-sm font-medium text-muted-foreground">Total Templates</p>
+                <p className="text-2xl font-bold text-foreground">{analytics.overview.totalTemplates}</p>
               </div>
               <FileText className="w-8 h-8 text-blue-600" />
             </div>
@@ -94,7 +94,7 @@ const TemplatesPage = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Avg ATS Score</p>
+                <p className="text-sm font-medium text-muted-foreground">Avg ATS Score</p>
                 <p className="text-2xl font-bold text-green-600">{analytics.overview.averageAtsScore}%</p>
               </div>
               <Award className="w-8 h-8 text-green-600" />
@@ -106,7 +106,7 @@ const TemplatesPage = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Downloads</p>
+                <p className="text-sm font-medium text-muted-foreground">Total Downloads</p>
                 <p className="text-2xl font-bold text-purple-600">{analytics.overview.totalDownloads.toLocaleString()}</p>
               </div>
               <TrendingUp className="w-8 h-8 text-purple-600" />
@@ -118,7 +118,7 @@ const TemplatesPage = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Categories</p>
+                <p className="text-sm font-medium text-muted-foreground">Categories</p>
                 <p className="text-2xl font-bold text-orange-600">{analytics.overview.totalCategories}</p>
               </div>
               <Users className="w-8 h-8 text-orange-600" />
@@ -140,7 +140,7 @@ const TemplatesPage = () => {
             <Sparkles className="w-5 h-5 text-yellow-500" />
             Recommended for You
           </CardTitle>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             Based on your profile and preferences
           </p>
         </CardHeader>
@@ -156,7 +156,7 @@ const TemplatesPage = () => {
                     </Badge>
                   </div>
                   
-                  <p className="text-xs text-gray-600 mb-3">{template.description}</p>
+                  <p className="text-xs text-muted-foreground mb-3">{template.description}</p>
                   
                   <div className="space-y-1 mb-3">
                     {reasons.slice(0, 2).map((reason, index) => (
@@ -206,14 +206,14 @@ const TemplatesPage = () => {
                   </div>
                   <div>
                     <h4 className="font-medium text-sm">{template.name}</h4>
-                    <p className="text-xs text-gray-600 capitalize">{template.category} • {template.style}</p>
+                    <p className="text-xs text-muted-foreground capitalize">{template.category} • {template.style}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge className="text-xs bg-green-100 text-green-800">
                     {template.atsScore}% ATS
                   </Badge>
-                  <span className="text-xs text-gray-500">{template.usage?.downloads || 0} downloads</span>
+                  <span className="text-xs text-muted-foreground">{template.usage?.downloads || 0} downloads</span>
                 </div>
               </div>
             ))}

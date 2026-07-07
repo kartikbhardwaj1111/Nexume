@@ -177,7 +177,7 @@ const JobAnalysisPage = () => {
                 </span>
               </div>
               {index < steps.length - 1 && (
-                <ArrowRight className="h-4 w-4 text-gray-400" />
+                <ArrowRight className="h-4 w-4 text-muted-foreground/70" />
               )}
             </React.Fragment>
           );

@@ -264,31 +264,31 @@ export function OptimizedATSChecker() {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-400/30 rounded-full backdrop-blur-sm"
+            className="inline-flex items-center px-4 py-2 bg-primary/10 border border-primary/30 rounded-full"
           >
-            <Sparkles className="w-4 h-4 mr-2 text-blue-400" />
-            <span className="text-sm font-semibold text-blue-100">AI-Powered Analysis</span>
+            <Sparkles className="w-4 h-4 mr-2 text-primary" />
+            <span className="text-sm font-semibold text-primary">AI-Powered Analysis</span>
           </motion.div>
           
-          <h1 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent leading-tight flex justify-center">
-            <SplitText text="ATS Resume Checker" />
+          <h1 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent leading-tight">
+            ATS Resume Checker
           </h1>
           
-          <div className="text-xl text-blue-100/80 max-w-3xl mx-auto leading-relaxed">
-            <BlurText text="Get instant ATS compatibility scores, detailed analysis, and personalized job recommendations powered by advanced AI" stagger={0.012} delay={200} />
+          <div className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Get instant ATS compatibility scores, detailed analysis, and personalized job recommendations powered by advanced AI
           </div>
           
-          <div className="flex flex-wrap justify-center gap-4 text-sm text-blue-200/70">
+          <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-400" />
+              <CheckCircle className="w-4 h-4 text-green-500" />
               <span>98% ATS Success Rate</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-400" />
+              <CheckCircle className="w-4 h-4 text-green-500" />
               <span>Instant Analysis</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-400" />
+              <CheckCircle className="w-4 h-4 text-green-500" />
               <span>Job Matching</span>
             </div>
           </div>
@@ -308,7 +308,7 @@ export function OptimizedATSChecker() {
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
               analysisType === 'standard' 
                 ? 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl' 
-                : 'border-white/30 text-white/70 hover:text-white hover:bg-white/10 hover:border-white/50'
+                : 'border-border text-foreground hover:bg-secondary hover:border-primary/40'
             }`}
           >
             <Zap className="w-5 h-5" />
@@ -321,7 +321,7 @@ export function OptimizedATSChecker() {
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
               analysisType === 'comprehensive' 
                 ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl' 
-                : 'border-white/30 text-white/70 hover:text-white hover:bg-white/10 hover:border-white/50'
+                : 'border-border text-foreground hover:bg-secondary hover:border-primary/40'
             }`}
           >
             <Sparkles className="w-5 h-5" />
@@ -336,28 +336,28 @@ export function OptimizedATSChecker() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <span className="text-xs font-semibold tracking-wider text-blue-200/50 uppercase">Analysis Scope</span>
-          <div className="flex bg-white/5 border border-white/10 rounded-xl p-1.5 backdrop-blur-md">
+          <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">Analysis Scope</span>
+          <div className="flex bg-secondary border border-border rounded-xl p-1.5">
             <button
               onClick={() => setAnalysisGoal('score-only')}
               className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
                 analysisGoal === 'score-only'
-                  ? 'bg-blue-600/30 border border-blue-400/30 text-blue-100 shadow-md'
-                  : 'text-white/60 hover:text-white hover:bg-white/5 border border-transparent'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'text-foreground hover:bg-background border border-transparent'
               }`}
             >
-              <Target className="w-4 h-4 text-blue-400" />
+              <Target className="w-4 h-4" />
               Score & Feedback Only
             </button>
             <button
               onClick={() => setAnalysisGoal('score-and-jobs')}
               className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
                 analysisGoal === 'score-and-jobs'
-                  ? 'bg-purple-600/30 border border-purple-400/30 text-purple-100 shadow-md'
-                  : 'text-white/60 hover:text-white hover:bg-white/5 border border-transparent'
+                  ? 'bg-purple-600 text-white shadow-md'
+                  : 'text-foreground hover:bg-background border border-transparent'
               }`}
             >
-              <Briefcase className="w-4 h-4 text-purple-400" />
+              <Briefcase className="w-4 h-4" />
               Score + Job Suggestions
             </button>
           </div>
@@ -370,7 +370,7 @@ export function OptimizedATSChecker() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
-        <Card className="border-0 shadow-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20">
+        <Card className="border-0 shadow-2xl bg-card border border-border shadow-sm">
           <CardContent className="p-8">
             {/* Step Navigation */}
             <div className="flex items-center justify-between mb-6">
@@ -484,7 +484,7 @@ export function OptimizedATSChecker() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
           >
-            <Card className="border-0 shadow-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20">
+            <Card className="border-0 shadow-2xl bg-card border border-border shadow-sm">
               <CardHeader className="pb-6">
                 <CardTitle className="flex items-center gap-3 text-2xl">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
@@ -541,7 +541,7 @@ export function OptimizedATSChecker() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
           >
-            <Card className="border-0 shadow-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20">
+            <Card className="border-0 shadow-2xl bg-card border border-border shadow-sm">
               <CardHeader className="pb-6">
                 <CardTitle className="flex items-center gap-3 text-2xl">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
@@ -612,7 +612,7 @@ export function OptimizedATSChecker() {
                       <Button
                         variant="secondary"
                         onClick={() => handleAnalyze(true)}
-                        className="px-6 border border-white/20 text-white hover:bg-white/10"
+                        className="px-6"
                       >
                         Skip & General Audit
                       </Button>

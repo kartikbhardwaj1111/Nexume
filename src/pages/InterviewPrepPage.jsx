@@ -249,7 +249,7 @@ const InterviewPrepPage = () => {
                                 <CardContent className="p-4 text-center">
                                     <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
                                     <div className="text-2xl font-bold">{stats.completedSessions}</div>
-                                    <div className="text-sm text-gray-600">Interviews Completed</div>
+                                    <div className="text-sm text-muted-foreground">Interviews Completed</div>
                                 </CardContent>
                             </Card>
 
@@ -257,7 +257,7 @@ const InterviewPrepPage = () => {
                                 <CardContent className="p-4 text-center">
                                     <Star className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
                                     <div className="text-2xl font-bold">{stats.averageScore}%</div>
-                                    <div className="text-sm text-gray-600">Average Score</div>
+                                    <div className="text-sm text-muted-foreground">Average Score</div>
                                 </CardContent>
                             </Card>
 
@@ -267,7 +267,7 @@ const InterviewPrepPage = () => {
                                     <div className={`text-2xl font-bold ${stats.improvement >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                                         {stats.improvement > 0 ? '+' : ''}{stats.improvement}%
                                     </div>
-                                    <div className="text-sm text-gray-600">Recent Improvement</div>
+                                    <div className="text-sm text-muted-foreground">Recent Improvement</div>
                                 </CardContent>
                             </Card>
 
@@ -275,7 +275,7 @@ const InterviewPrepPage = () => {
                                 <CardContent className="p-4 text-center">
                                     <Target className="h-8 w-8 text-purple-600 mx-auto mb-2" />
                                     <div className="text-2xl font-bold">{stats.totalQuestions}</div>
-                                    <div className="text-sm text-gray-600">Questions Answered</div>
+                                    <div className="text-sm text-muted-foreground">Questions Answered</div>
                                 </CardContent>
                             </Card>
                         </div>
@@ -371,7 +371,7 @@ const InterviewPrepPage = () => {
                                                     <div className="font-medium">
                                                         {session.config?.role?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'General'} Interview
                                                     </div>
-                                                    <div className="text-sm text-gray-600">
+                                                    <div className="text-sm text-muted-foreground">
                                                         {new Date(session.metadata.createdAt).toLocaleDateString()}
                                                     </div>
                                                 </div>
@@ -379,7 +379,7 @@ const InterviewPrepPage = () => {
                                                     <Badge variant="outline" className="mb-1">
                                                         {session.overallScore || 0}% Score
                                                     </Badge>
-                                                    <div className="text-xs text-gray-600">
+                                                    <div className="text-xs text-muted-foreground">
                                                         {session.metadata.answeredQuestions || 0} questions
                                                     </div>
                                                 </div>
@@ -387,7 +387,7 @@ const InterviewPrepPage = () => {
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className="text-center py-8 text-gray-500">
+                                    <div className="text-center py-8 text-muted-foreground">
                                         <Target className="h-12 w-12 mx-auto mb-4 opacity-50" />
                                         <p>No interview history yet. Start your first practice session!</p>
                                     </div>
@@ -495,7 +495,7 @@ const InterviewPrepPage = () => {
                                             </div>
                                             <p className="font-medium mb-2">{question.question}</p>
                                             {question.evaluationCriteria && (
-                                                <div className="text-sm text-gray-600">
+                                                <div className="text-sm text-muted-foreground">
                                                     <strong>Consider:</strong> {question.evaluationCriteria.slice(0, 2).join(', ')}
                                                 </div>
                                             )}
@@ -532,7 +532,7 @@ const InterviewPrepPage = () => {
                                                         <h3 className="font-semibold">
                                                             {session.config?.role?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'General'} Interview
                                                         </h3>
-                                                        <p className="text-sm text-gray-600">
+                                                        <p className="text-sm text-muted-foreground">
                                                             {new Date(session.metadata.createdAt).toLocaleString()}
                                                         </p>
                                                     </div>
@@ -545,13 +545,13 @@ const InterviewPrepPage = () => {
 
                                                 <div className="grid grid-cols-3 gap-4 text-sm">
                                                     <div>
-                                                        <span className="text-gray-600">Questions:</span> {session.metadata.answeredQuestions || 0}
+                                                        <span className="text-muted-foreground">Questions:</span> {session.metadata.answeredQuestions || 0}
                                                     </div>
                                                     <div>
-                                                        <span className="text-gray-600">Duration:</span> {Math.round((session.metadata.sessionDuration || 0) / 60)}m
+                                                        <span className="text-muted-foreground">Duration:</span> {Math.round((session.metadata.sessionDuration || 0) / 60)}m
                                                     </div>
                                                     <div>
-                                                        <span className="text-gray-600">Company:</span> {session.config?.company || 'General'}
+                                                        <span className="text-muted-foreground">Company:</span> {session.config?.company || 'General'}
                                                     </div>
                                                 </div>
 
@@ -571,7 +571,7 @@ const InterviewPrepPage = () => {
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className="text-center py-8 text-gray-500">
+                                    <div className="text-center py-8 text-muted-foreground">
                                         <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
                                         <p>No interview history available.</p>
                                     </div>
@@ -668,8 +668,8 @@ const InterviewPrepPage = () => {
                         ) : (
                             <Card>
                                 <CardContent className="p-8 text-center">
-                                    <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                                    <p className="text-gray-600">Complete an interview to see your feedback and analysis.</p>
+                                    <BarChart3 className="h-12 w-12 text-muted-foreground/70 mx-auto mb-4" />
+                                    <p className="text-muted-foreground">Complete an interview to see your feedback and analysis.</p>
                                     <Button
                                         onClick={() => setActiveTab('practice')}
                                         className="mt-4"

@@ -227,9 +227,9 @@ function LandingContent({ navigate, heroRef, heroInView, statsRef, statsInView, 
             </motion.div>
             
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground leading-[1.1] text-left flex flex-col items-start">
-              <SplitText text="Accelerate Your Career" className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground leading-[1.1] text-left" />
+              <span>Accelerate Your Career</span>
               <span className="bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent mt-2 font-black">
-                <DecryptedText text="Powered by Advanced AI" speed={45} delay={700} />
+                Powered by Advanced AI
               </span>
             </h1>
             
