@@ -10,6 +10,7 @@ import {
 import { analyticsStorage } from './analyticsStorage';
 import { aiServiceManager } from '../services/ai/AIServiceManager.js';
 import { geminiService } from '../services/ai/GeminiService.js';
+import { validateResumeText } from '../utils/validation.js';
 
 /**
  * Creates a configured Google Generative AI provider instance.
@@ -105,6 +106,20 @@ export async function extractResumeKeywords(resumeText, apiKey) {
  * Analyzes the résumé against the job description and returns a detailed report.
  */
 export async function analyzeResumeWithGemini(resumeText, jobDescription, apiKey) {
+  const validation = validateResumeText(resumeText);
+  if (!validation.isValid) {
+    return `
+# ATS Analysis Report
+
+**OVERALL SCORE: 0/100**
+
+## ⚠️ Validation Error
+${validation.error}
+
+*Please upload a valid resume showing professional experience and education to perform ATS analysis.*
+`;
+  }
+
   // Truncate inputs for faster processing
   const truncatedResume = resumeText.substring(0, 3000);
   const truncatedJD = jobDescription.substring(0, 2000);
@@ -168,6 +183,22 @@ Format as markdown with clear sections.`;
  * Main resume analysis function that supports both general and job-specific analysis
  */
 export async function analyzeResume(resumeText, jobDescription, jobSpecificData = null, apiKey = null) {
+  const validation = validateResumeText(resumeText);
+  if (!validation.isValid) {
+    return {
+      overall_score: 0,
+      confidence: 1.0,
+      pillars: {
+        core_skills: { score: 0, matched: [], required_count: 0 },
+        relevant_experience: { score: 0, candidate_years: 0, jd_years: 0, evidence: [] },
+        tools_methodologies: { score: 0, matched: [] },
+        education_credentials: { score: 0, degree: 'Not specified', notes: '' }
+      },
+      recommendations: [validation.error],
+      errors: [validation.error]
+    };
+  }
+
   // Always use Gemini service through AI Service Manager
   try {
     console.log('Using Gemini AI for resume analysis...');
@@ -236,6 +267,22 @@ export async function analyzeResume(resumeText, jobDescription, jobSpecificData 
  * Generates job-tailored ATS score with specific job requirements
  */
 export async function generateJobTailoredATSScore(resumeText, jobDescription, jobData, apiKey = null, retryCount = 0) {
+  const validation = validateResumeText(resumeText);
+  if (!validation.isValid) {
+    return {
+      overall_score: 0,
+      confidence: 1.0,
+      pillars: {
+        core_skills: { score: 0, matched: [], required_count: 0 },
+        relevant_experience: { score: 0, candidate_years: 0, jd_years: 0, evidence: [] },
+        tools_methodologies: { score: 0, matched: [] },
+        education_credentials: { score: 0, degree: 'Not specified', notes: '' }
+      },
+      recommendations: [validation.error],
+      errors: [validation.error]
+    };
+  }
+
   // If no API key provided, use the new AI Service Manager with job-specific context
   if (!apiKey) {
     try {
@@ -630,6 +677,22 @@ IMPORTANT: Focus your analysis on this specific ${jobData.jobTitle} position. Pr
  * No API key required - uses intelligent service selection and fallback.
  */
 export async function generateATSScore(resumeText, jobDescription, apiKey = null, retryCount = 0) {
+  const validation = validateResumeText(resumeText);
+  if (!validation.isValid) {
+    return {
+      overall_score: 0,
+      confidence: 1.0,
+      pillars: {
+        core_skills: { score: 0, matched: [], required_count: 0 },
+        relevant_experience: { score: 0, candidate_years: 0, jd_years: 0, evidence: [] },
+        tools_methodologies: { score: 0, matched: [] },
+        education_credentials: { score: 0, degree: 'Not specified', notes: '' }
+      },
+      recommendations: [validation.error],
+      errors: [validation.error]
+    };
+  }
+
   // If no API key provided, use the new AI Service Manager
   if (!apiKey) {
     try {

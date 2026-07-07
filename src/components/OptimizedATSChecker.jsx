@@ -29,6 +29,10 @@ import { extractTextFromFile } from '@/lib/fileParser';
 import { generateATSScore } from '@/lib/analyzeResume';
 import { enhancedAnalysisEngine } from '@/services/ai/EnhancedAnalysisEngine';
 import { jobMatchingService } from '@/services/JobMatchingService';
+import { validateResumeText } from '@/utils/validation';
+import SplitText from '@/components/animations/SplitText';
+import BlurText from '@/components/animations/BlurText';
+import DecryptedText from '@/components/animations/DecryptedText';
 
 export function OptimizedATSChecker() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -42,6 +46,7 @@ export function OptimizedATSChecker() {
   const [matchingJobs, setMatchingJobs] = useState(null);
   const [loadingJobs, setLoadingJobs] = useState(false);
   const [analysisType, setAnalysisType] = useState('standard'); // 'standard' or 'comprehensive'
+  const [analysisGoal, setAnalysisGoal] = useState('score-and-jobs'); // 'score-only' or 'score-and-jobs'
 
   const steps = useMemo(() => [
     { 
@@ -72,16 +77,24 @@ export function OptimizedATSChecker() {
     switch (step) {
       case 0: return true;
       case 1: return resumeText.trim() !== '';
-      case 2: return resumeText.trim() !== '' && jobDescription.trim() !== '';
+      case 2: return resumeText.trim() !== '' && (analysisGoal === 'score-only' || jobDescription.trim() !== '');
       default: return false;
     }
-  }, [resumeText, jobDescription]);
+  }, [resumeText, jobDescription, analysisGoal]);
 
   // Optimized file upload handler
   const handleFileUpload = useCallback(async (file) => {
     try {
       setError('');
       const text = await extractTextFromFile(file);
+      
+      const validation = validateResumeText(text);
+      if (!validation.isValid) {
+        setError(validation.error);
+        setResumeText('');
+        return;
+      }
+      
       setResumeText(text);
       
       // Auto-advance to next step
@@ -94,9 +107,22 @@ export function OptimizedATSChecker() {
   }, []);
 
   // Enhanced analysis handler with progress tracking
-  const handleAnalyze = useCallback(async () => {
-    if (!resumeText || !jobDescription) {
-      setError('Please upload your resume and add a job description before analyzing');
+  const handleAnalyze = useCallback(async (bypassJD = false) => {
+    const activeJD = bypassJD === true ? '' : jobDescription;
+    
+    if (!resumeText) {
+      setError('Please upload your resume before analyzing');
+      return;
+    }
+
+    if (analysisGoal === 'score-and-jobs' && !activeJD.trim()) {
+      setError('Please add a job description before analyzing');
+      return;
+    }
+
+    const validation = validateResumeText(resumeText);
+    if (!validation.isValid) {
+      setError(validation.error);
       return;
     }
 
@@ -124,7 +150,7 @@ export function OptimizedATSChecker() {
         // Use enhanced analysis engine
         scoreData = await enhancedAnalysisEngine.analyzeResumeComprehensive(
           resumeText, 
-          jobDescription,
+          activeJD,
           {
             includeIndustryAnalysis: true,
             includeSkillGapAnalysis: true,
@@ -134,10 +160,19 @@ export function OptimizedATSChecker() {
         );
       } else {
         // Use standard analysis
-        scoreData = await generateATSScore(resumeText, jobDescription);
+        scoreData = await generateATSScore(resumeText, activeJD);
       }
 
       clearInterval(progressInterval);
+      
+      if (scoreData && scoreData.success === false) {
+        setError(scoreData.error || 'The uploaded document is not a valid resume. Please upload a valid resume.');
+        setCurrentStep(0); // Reset to Resume Upload step so they can resubmit
+        setAnalysisProgress(0);
+        setIsAnalyzing(false);
+        return;
+      }
+
       setAnalysisProgress(100);
       
       // Small delay for better UX
@@ -149,11 +184,11 @@ export function OptimizedATSChecker() {
 
     } catch (err) {
       console.error('Analysis error:', err);
-      setError('Analysis failed. Please try again or use standard analysis mode.');
+      setError(err.message || 'Analysis failed. Please try again or use standard analysis mode.');
     } finally {
       setIsAnalyzing(false);
     }
-  }, [resumeText, jobDescription, analysisType]);
+  }, [resumeText, jobDescription, analysisGoal, analysisType]);
 
   // Enhanced job matching with detailed logging
   const handleFindJobs = useCallback(async () => {
@@ -223,11 +258,7 @@ export function OptimizedATSChecker() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
       {/* Header with Analysis Type Toggle */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center space-y-4"
-      >
+      <div className="text-center space-y-4">
         <div className="space-y-4">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -239,13 +270,13 @@ export function OptimizedATSChecker() {
             <span className="text-sm font-semibold text-blue-100">AI-Powered Analysis</span>
           </motion.div>
           
-          <h1 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent leading-tight">
-            ATS Resume Checker
+          <h1 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent leading-tight flex justify-center">
+            <SplitText text="ATS Resume Checker" />
           </h1>
           
-          <p className="text-xl text-blue-100/80 max-w-3xl mx-auto leading-relaxed">
-            Get instant ATS compatibility scores, detailed analysis, and personalized job recommendations powered by advanced AI
-          </p>
+          <div className="text-xl text-blue-100/80 max-w-3xl mx-auto leading-relaxed">
+            <BlurText text="Get instant ATS compatibility scores, detailed analysis, and personalized job recommendations powered by advanced AI" stagger={0.012} delay={200} />
+          </div>
           
           <div className="flex flex-wrap justify-center gap-4 text-sm text-blue-200/70">
             <div className="flex items-center gap-2">
@@ -265,7 +296,7 @@ export function OptimizedATSChecker() {
         
         {/* Analysis Type Toggle */}
         <motion.div 
-          className="flex justify-center gap-3"
+          className="flex flex-wrap justify-center gap-3"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
@@ -297,7 +328,41 @@ export function OptimizedATSChecker() {
             Comprehensive Analysis
           </Button>
         </motion.div>
-      </motion.div>
+
+        {/* Goal Scope Toggle */}
+        <motion.div 
+          className="flex flex-col items-center gap-2 mt-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <span className="text-xs font-semibold tracking-wider text-blue-200/50 uppercase">Analysis Scope</span>
+          <div className="flex bg-white/5 border border-white/10 rounded-xl p-1.5 backdrop-blur-md">
+            <button
+              onClick={() => setAnalysisGoal('score-only')}
+              className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
+                analysisGoal === 'score-only'
+                  ? 'bg-blue-600/30 border border-blue-400/30 text-blue-100 shadow-md'
+                  : 'text-white/60 hover:text-white hover:bg-white/5 border border-transparent'
+              }`}
+            >
+              <Target className="w-4 h-4 text-blue-400" />
+              Score & Feedback Only
+            </button>
+            <button
+              onClick={() => setAnalysisGoal('score-and-jobs')}
+              className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
+                analysisGoal === 'score-and-jobs'
+                  ? 'bg-purple-600/30 border border-purple-400/30 text-purple-100 shadow-md'
+                  : 'text-white/60 hover:text-white hover:bg-white/5 border border-transparent'
+              }`}
+            >
+              <Briefcase className="w-4 h-4 text-purple-400" />
+              Score + Job Suggestions
+            </button>
+          </div>
+        </motion.div>
+      </div>
 
       {/* Progress Indicator */}
       <motion.div
@@ -450,7 +515,14 @@ export function OptimizedATSChecker() {
 
                 <div className="flex justify-end">
                   <Button 
-                    onClick={() => setCurrentStep(1)}
+                    onClick={() => {
+                      const validation = validateResumeText(resumeText);
+                      if (!validation.isValid) {
+                        setError(validation.error);
+                        return;
+                      }
+                      setCurrentStep(1);
+                    }}
                     disabled={!resumeText.trim()}
                     className="px-8"
                   >
@@ -479,9 +551,28 @@ export function OptimizedATSChecker() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
+                {analysisGoal === 'score-only' && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-start gap-3 p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 text-sm text-blue-200"
+                  >
+                    <Sparkles className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-blue-100 mb-1">General Resume Audit Mode Available</p>
+                      <p className="text-blue-200/80 leading-relaxed text-left">
+                        Since you chose <strong>Score & Feedback Only</strong>, you can skip adding a job description. Skipping will evaluate your resume against general industry-standard formatting, readability, and structural guidelines.
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+
                 <div className="space-y-4">
-                  <label className="text-base font-medium">
-                    Target Job Description
+                  <label className="text-base font-medium flex justify-between items-center">
+                    <span>Target Job Description</span>
+                    {analysisGoal === 'score-only' && (
+                      <span className="text-xs text-blue-300 font-normal bg-blue-500/10 px-2.5 py-1 rounded-full border border-blue-500/20">Optional</span>
+                    )}
                   </label>
                   <textarea
                     placeholder="📋 Paste the complete job description here...\n\n💡 Example:\n\nSoftware Engineer - Frontend\n\nWe are looking for a skilled Frontend Developer with 3+ years of experience in React, JavaScript, and modern web technologies.\n\nRequirements:\n• Bachelor's degree in Computer Science\n• 3+ years of React development\n• Experience with TypeScript, Node.js\n• Knowledge of Git, CI/CD pipelines\n• Strong problem-solving skills"
@@ -509,21 +600,32 @@ export function OptimizedATSChecker() {
                   </motion.div>
                 )}
 
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center pt-2">
                   <Button 
                     variant="outline"
                     onClick={() => setCurrentStep(0)}
                   >
                     ← Back
                   </Button>
-                  <Button 
-                    onClick={handleAnalyze}
-                    disabled={!jobDescription.trim()}
-                    className="px-8 bg-gradient-to-r from-primary to-primary-glow"
-                  >
-                    <Target className="w-4 h-4 mr-2" />
-                    Analyze Resume
-                  </Button>
+                  <div className="flex gap-3">
+                    {analysisGoal === 'score-only' && (
+                      <Button
+                        variant="secondary"
+                        onClick={() => handleAnalyze(true)}
+                        className="px-6 border border-white/20 text-white hover:bg-white/10"
+                      >
+                        Skip & General Audit
+                      </Button>
+                    )}
+                    <Button 
+                      onClick={() => handleAnalyze(false)}
+                      disabled={!jobDescription.trim()}
+                      className="px-8 bg-gradient-to-r from-primary to-primary-glow"
+                    >
+                      <Target className="w-4 h-4 mr-2" />
+                      Analyze Resume
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -618,44 +720,48 @@ export function OptimizedATSChecker() {
                 )}
 
                 {/* Job Application Hub - NO REGIONAL RESTRICTIONS */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7 }}
-                >
-                  <Card className="border-0 shadow-xl">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Briefcase className="w-5 h-5 text-green-500" />
-                        Job Application Hub
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <JobApplicationHub
-                        resumeSkills={atsScore?.pillars?.core_skills?.matched || []}
-                        userProfile={{
-                          skills: atsScore?.pillars?.core_skills?.matched || [],
-                          experience: atsScore?.pillars?.relevant_experience?.candidate_years || 0
-                        }}
-                      />
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                {analysisGoal === 'score-and-jobs' && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 }}
+                  >
+                    <Card className="border-0 shadow-xl">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Briefcase className="w-5 h-5 text-green-500" />
+                          Job Application Hub
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <JobApplicationHub
+                          resumeSkills={atsScore?.pillars?.core_skills?.matched || []}
+                          userProfile={{
+                            skills: atsScore?.pillars?.core_skills?.matched || [],
+                            experience: atsScore?.pillars?.relevant_experience?.candidate_years || 0
+                          }}
+                        />
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                )}
 
                 {/* Job Search Guide */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.9 }}
-                >
-                  <JobSearchGuide
-                    skills={atsScore?.pillars?.core_skills?.matched || []}
-                    location="India"
-                  />
-                </motion.div>
+                {analysisGoal === 'score-and-jobs' && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.9 }}
+                  >
+                    <JobSearchGuide
+                      skills={atsScore?.pillars?.core_skills?.matched || []}
+                      location="India"
+                    />
+                  </motion.div>
+                )}
 
                 {/* Job Matching Debugger (Development Tool) */}
-                {process.env.NODE_ENV === 'development' && (
+                {process.env.NODE_ENV === 'development' && analysisGoal === 'score-and-jobs' && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}

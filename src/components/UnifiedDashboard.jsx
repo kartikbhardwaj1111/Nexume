@@ -144,19 +144,6 @@ const UnifiedDashboard = () => {
       });
     }
     
-    // Career progression recommendations
-    if (careerProgress && careerProgress.skillsGap?.length > 0) {
-      recommendations.push({
-        type: 'career',
-        title: 'Develop Missing Skills',
-        description: `${careerProgress.skillsGap.length} skills identified for your target role`,
-        action: 'View Career Path',
-        path: '/career',
-        priority: 'medium',
-        icon: Target
-      });
-    }
-    
     // Interview preparation recommendations
     if (!interviewStats || interviewStats.totalSessions < 3) {
       recommendations.push({
@@ -389,50 +376,7 @@ const UnifiedDashboard = () => {
           </TabsContent>
 
           <TabsContent value="progress" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Career Progress */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Target className="w-5 h-5 mr-2" />
-                    Career Development
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {dashboardData.careerProgress ? (
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Current Level</p>
-                        <p className="font-semibold capitalize">
-                          {dashboardData.careerProgress.experienceLevel}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Skills Identified</p>
-                        <p className="font-semibold">
-                          {dashboardData.careerProgress.skills?.length || 0} skills
-                        </p>
-                      </div>
-                      <Button 
-                        variant="outline" 
-                        onClick={() => navigate('/career')}
-                        className="w-full"
-                      >
-                        View Career Path
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                      <p className="text-muted-foreground mb-4">No career data available</p>
-                      <Button onClick={() => navigate('/career')}>
-                        Start Career Analysis
-                      </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
+            <div className="max-w-2xl mx-auto">
               {/* Interview Progress */}
               <Card>
                 <CardHeader>

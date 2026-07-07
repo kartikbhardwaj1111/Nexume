@@ -39,14 +39,6 @@ const CrossFeatureNavigation = ({ currentFeature, userProgress = {} }) => {
           condition: () => userProgress.resume?.lastScore > 70
         },
         {
-          feature: 'career',
-          title: 'Plan Career Growth',
-          description: 'Identify skills to develop for advancement',
-          icon: Target,
-          priority: 'medium',
-          condition: () => true
-        },
-        {
           feature: 'templates',
           title: 'Professional Templates',
           description: 'Create a polished version with our templates',
@@ -68,49 +60,12 @@ const CrossFeatureNavigation = ({ currentFeature, userProgress = {} }) => {
           condition: () => true
         },
         {
-          feature: 'career',
-          title: 'Skill Development',
-          description: 'Learn skills required for this role',
-          icon: Target,
-          priority: 'medium',
-          condition: () => true
-        },
-        {
           feature: 'ats-checker',
           title: 'Optimize Resume',
           description: 'Tailor your resume for this specific job',
           icon: FileText,
           priority: 'medium',
           condition: () => userProgress.resume?.lastScore < 80
-        }
-      ]
-    },
-    'career': {
-      title: 'Career Path Mapped',
-      suggestions: [
-        {
-          feature: 'interview-prep',
-          title: 'Interview Practice',
-          description: 'Practice questions for your target role',
-          icon: Users,
-          priority: 'high',
-          condition: () => userProgress.interview?.sessionsCompleted < 3
-        },
-        {
-          feature: 'job-analysis',
-          title: 'Find Target Jobs',
-          description: 'Search for roles matching your career goals',
-          icon: Briefcase,
-          priority: 'medium',
-          condition: () => true
-        },
-        {
-          feature: 'ats-checker',
-          title: 'Update Resume',
-          description: 'Reflect new skills in your resume',
-          icon: FileText,
-          priority: 'low',
-          condition: () => true
         }
       ]
     },
@@ -124,14 +79,6 @@ const CrossFeatureNavigation = ({ currentFeature, userProgress = {} }) => {
           icon: Briefcase,
           priority: 'high',
           condition: () => userProgress.interview?.averageScore > 70
-        },
-        {
-          feature: 'career',
-          title: 'Long-term Planning',
-          description: 'Plan your next career moves',
-          icon: Target,
-          priority: 'medium',
-          condition: () => true
         },
         {
           feature: 'ats-checker',
@@ -202,7 +149,6 @@ const CrossFeatureNavigation = ({ currentFeature, userProgress = {} }) => {
     const paths = {
       'ats-checker': '/ats-checker',
       'job-analysis': '/job-analysis',
-      'career': '/career',
       'interview-prep': '/interview-prep',
       'templates': '/templates'
     };

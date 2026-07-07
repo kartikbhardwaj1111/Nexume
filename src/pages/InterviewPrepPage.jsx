@@ -33,12 +33,15 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-// Import interview services
 import {
     questionManager,
     sessionManager,
     interviewEvaluator
 } from '../services/interview/index.js';
+import { motion } from 'framer-motion';
+import SplitText from '../components/animations/SplitText';
+import BlurText from '../components/animations/BlurText';
+import DecryptedText from '../components/animations/DecryptedText';
 
 const InterviewPrepPage = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -191,8 +194,7 @@ const InterviewPrepPage = () => {
                 { path: '/interview-prep', label: 'Interview Prep' },
                 { path: '/interview-prep', label: 'Mock Interview' }
             ]}>
-                <div className="bg-gradient-to-br from-black via-gray-900 to-green-900/20">
-                <div className="container mx-auto px-4 py-8">
+                <div className="max-w-7xl mx-auto px-4 py-10 relative z-10">
                     <MockInterview
                         questions={currentInterview.questions}
                         config={currentInterview.config}
@@ -205,7 +207,6 @@ const InterviewPrepPage = () => {
                         }}
                     />
                 </div>
-                </div>
             </Layout>
         );
     }
@@ -215,13 +216,14 @@ const InterviewPrepPage = () => {
             { path: '/', label: 'Home' },
             { path: '/interview-prep', label: 'Interview Prep' }
         ]}>
-            <div className="bg-gradient-to-br from-black via-gray-900 to-green-900/20">
-            <div className="container mx-auto px-4 py-8">
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold mb-2">Interview Preparation</h1>
-                    <p className="text-gray-600">
-                        Practice interviews, get feedback, and improve your skills with our comprehensive preparation platform.
-                    </p>
+            <div className="max-w-7xl mx-auto px-4 py-10 relative z-10 space-y-6">
+                <div className="border-b border-border/60 pb-5">
+                    <h1 className="text-3xl font-extrabold tracking-tight text-foreground flex items-center">
+                        <SplitText text="Interview Preparation" />
+                    </h1>
+                    <div className="text-sm text-muted-foreground mt-1">
+                        <BlurText text="Practice interviews, get feedback, and improve your skills with our comprehensive preparation platform." stagger={0.01} delay={200} />
+                    </div>
                 </div>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -235,7 +237,13 @@ const InterviewPrepPage = () => {
 
                     {/* Dashboard Tab */}
                     <TabsContent value="dashboard" className="space-y-6">
-                        {/* Statistics Cards */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="space-y-6"
+                        >
+                            {/* Statistics Cards */}
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <Card>
                                 <CardContent className="p-4 text-center">
@@ -386,10 +394,17 @@ const InterviewPrepPage = () => {
                                 )}
                             </CardContent>
                         </Card>
+                        </motion.div>
                     </TabsContent>
 
                     {/* Practice Tab */}
                     <TabsContent value="practice" className="space-y-6">
+                        <motion.div
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="space-y-6"
+                        >
                         <div className="flex items-center gap-4 mb-6">
                             <div className="flex-1">
                                 <Input
@@ -489,10 +504,17 @@ const InterviewPrepPage = () => {
                                 </div>
                             </CardContent>
                         </Card>
+                        </motion.div>
                     </TabsContent>
 
                     {/* History Tab */}
                     <TabsContent value="history" className="space-y-6">
+                        <motion.div
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="space-y-6"
+                        >
                         <Card>
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
@@ -556,10 +578,17 @@ const InterviewPrepPage = () => {
                                 )}
                             </CardContent>
                         </Card>
+                        </motion.div>
                     </TabsContent>
 
                     {/* Tips & Guides Tab */}
                     <TabsContent value="tips" className="space-y-6">
+                        <motion.div
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="space-y-6"
+                        >
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {Object.entries(interviewTips).map(([category, tips]) => (
                                 <Card key={category}>
@@ -616,11 +645,18 @@ const InterviewPrepPage = () => {
                                 </div>
                             </CardContent>
                         </Card>
+                        </motion.div>
                     </TabsContent>
 
                     {/* Feedback Tab */}
                     <TabsContent value="feedback">
-                        {currentEvaluation ? (
+                        <motion.div
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="space-y-6"
+                        >
+                            {currentEvaluation ? (
                             <InterviewFeedback
                                 evaluation={currentEvaluation}
                                 onRetakeInterview={() => {
@@ -643,9 +679,9 @@ const InterviewPrepPage = () => {
                                 </CardContent>
                             </Card>
                         )}
+                        </motion.div>
                     </TabsContent>
                 </Tabs>
-            </div>
             </div>
         </Layout>
     );

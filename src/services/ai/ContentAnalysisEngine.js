@@ -1,9 +1,5 @@
-/**
- * Content Analysis Engine - Advanced rule-based scoring system for offline analysis
- * Provides comprehensive resume analysis without requiring external AI services
- */
-
 import { atsFormatDetector } from './ATSFormatDetector.js';
+import { validateResumeText } from '../../utils/validation.js';
 
 export class ContentAnalysisEngine {
   constructor() {
@@ -17,6 +13,23 @@ export class ContentAnalysisEngine {
    * Main analysis method - provides comprehensive content analysis
    */
   analyzeContent(resumeText, jobDescription) {
+    jobDescription = jobDescription || '';
+    const validation = validateResumeText(resumeText);
+    if (!validation.isValid) {
+      return {
+        overall_score: 0,
+        confidence: 1.0,
+        pillars: {
+          core_skills: { score: 0, matched: [], required_count: 0 },
+          relevant_experience: { score: 0, candidate_years: 0, jd_years: 0, evidence: [] },
+          tools_methodologies: { score: 0, matched: [] },
+          education_credentials: { score: 0, degree: 'Not specified', notes: '' }
+        },
+        recommendations: [validation.error],
+        errors: [validation.error]
+      };
+    }
+
     const resume = resumeText.toLowerCase();
     const jd = jobDescription.toLowerCase();
     

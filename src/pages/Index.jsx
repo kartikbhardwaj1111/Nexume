@@ -4,7 +4,7 @@ import { useInView } from 'react-intersection-observer';
 import CountUp from 'react-countup';
 import { memo, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
@@ -27,11 +27,13 @@ import {
   Clock
 } from 'lucide-react';
 
-import SplashCursor from '@/components/SplashCursor';
+import Layout from '@/components/Layout';
 import UnifiedDashboard from '@/components/UnifiedDashboard';
 import { useAppContext } from '@/context/AppContext';
 import LocalStorageManager from '../services/storage/LocalStorageManager.js';
-import ShinyText from '@/components/ShinyText';
+import SplitText from '@/components/animations/SplitText';
+import BlurText from '@/components/animations/BlurText';
+import DecryptedText from '@/components/animations/DecryptedText';
 
 export default function Index() {
   const navigate = useNavigate();
@@ -75,15 +77,6 @@ export default function Index() {
       stats: "75K+ Jobs Matched"
     },
     {
-      icon: TrendingUp,
-      title: "Career Progression",
-      description: "Track your career growth with personalized roadmaps, skills gap analysis, and milestone tracking",
-      color: "from-green-500 to-emerald-500",
-      action: () => navigate('/career'),
-      actionText: "Plan Career",
-      stats: "4.2x More Interviews"
-    },
-    {
       icon: Users,
       title: "Interview Preparation",
       description: "Practice with mock interviews, get AI feedback, and prepare for company-specific questions",
@@ -108,279 +101,295 @@ export default function Index() {
       color: "from-pink-500 to-rose-500",
       action: () => navigate('/templates'),
       actionText: "Browse Templates",
-      stats: "50+ Templates"
+      stats: "ATS-Friendly Layouts"
     }
   ];
 
-  const containerVariants = useMemo(() => ({
+  const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
+        staggerChildren: 0.15,
+        delayChildren: 0.1
       }
     }
-  }), []);
+  };
 
-  const itemVariants = useMemo(() => ({
-    hidden: { opacity: 0, y: 20 },
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.5,
-        ease: "easeOut"
+        type: "spring",
+        stiffness: 100,
+        damping: 15
       }
     }
-  }), []);
+  };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-black">
-      <SplashCursor />
-      {/* Enhanced Dense Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Primary gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-indigo-600/40 to-purple-600/30" />
-        
-        {/* Static gradient orbs for better performance */}
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-blue-400/30 via-purple-400/20 to-transparent rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-cyan-400/30 via-teal-400/20 to-transparent rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-purple-400/20 via-pink-400/15 to-transparent rounded-full blur-3xl" />
-        
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `
-              linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
-            `,
-            backgroundSize: '50px 50px'
-          }} />
-        </div>
-        
-        {/* Radial gradient overlay for depth */}
-        <div className="absolute inset-0 bg-gradient-radial from-transparent via-black/20 to-black/40" />
-      </div>
-
-
-      
+    <Layout>
       <div className="max-w-7xl mx-auto px-4 py-12 relative z-10">
-        {/* Conditional Content - Dashboard or Landing */}
-        {hasUserData() ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-12"
-          >
-            <Tabs defaultValue="dashboard" className="space-y-6">
-              <div className="flex items-center justify-between">
-                <TabsList className="grid w-full max-w-md grid-cols-2 bg-white/10 backdrop-blur-sm border-white/20">
-                  <TabsTrigger value="dashboard" className="flex items-center space-x-2 data-[state=active]:bg-white/20">
-                    <LayoutDashboard className="w-4 h-4" />
-                    <span>Dashboard</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="landing" className="flex items-center space-x-2 data-[state=active]:bg-white/20">
-                    <Sparkles className="w-4 h-4" />
-                    <span>Explore</span>
-                  </TabsTrigger>
-                </TabsList>
-                <motion.div 
-                  className="text-right"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <p className="text-lg font-semibold text-blue-100">Welcome back!</p>
-                  <p className="text-sm text-blue-300">Continue your career journey</p>
-                </motion.div>
-              </div>
-              
-              <TabsContent value="dashboard" className="space-y-6">
-                <UnifiedDashboard />
-              </TabsContent>
-              
-              <TabsContent value="landing" className="space-y-6">
-                <LandingContent 
-                  navigate={navigate}
-                  heroRef={heroRef}
-                  heroInView={heroInView}
-                  statsRef={statsRef}
-                  statsInView={statsInView}
-                  featuresRef={featuresRef}
-                  featuresInView={featuresInView}
-                  containerVariants={containerVariants}
-                  itemVariants={itemVariants}
-                  stats={stats}
-                  features={features}
-                />
-              </TabsContent>
-            </Tabs>
-          </motion.div>
-        ) : (
-          <LandingContent 
-            navigate={navigate}
-            heroRef={heroRef}
-            heroInView={heroInView}
-            statsRef={statsRef}
-            statsInView={statsInView}
-            featuresRef={featuresRef}
-            featuresInView={featuresInView}
-            containerVariants={containerVariants}
-            itemVariants={itemVariants}
-            stats={stats}
-            features={features}
-          />
-        )}
-      </div>
-    </div>
+          {/* Conditional Content - Dashboard or Landing */}
+          {hasUserData() ? (
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="mb-12"
+            >
+              <Tabs defaultValue="dashboard" className="space-y-6">
+                <div className="flex items-center justify-between border-b border-border/60 pb-4">
+                  <TabsList className="grid w-full max-w-md grid-cols-2 bg-muted/60 p-1 border border-border">
+                    <TabsTrigger value="dashboard" className="flex items-center space-x-2 rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground">
+                      <LayoutDashboard className="w-4 h-4" />
+                      <span>Dashboard</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="landing" className="flex items-center space-x-2 rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground">
+                      <Sparkles className="w-4 h-4" />
+                      <span>Explore</span>
+                    </TabsTrigger>
+                  </TabsList>
+                  <motion.div 
+                    className="text-right hidden sm:block"
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <p className="text-sm font-semibold text-foreground">Welcome back!</p>
+                    <p className="text-xs text-muted-foreground">Continue your career journey</p>
+                  </motion.div>
+                </div>
+                
+                <TabsContent value="dashboard" className="space-y-6 pt-2">
+                  <UnifiedDashboard />
+                </TabsContent>
+                
+                <TabsContent value="landing" className="space-y-6 pt-2">
+                  <LandingContent 
+                    navigate={navigate}
+                    heroRef={heroRef}
+                    heroInView={heroInView}
+                    statsRef={statsRef}
+                    statsInView={statsInView}
+                    featuresRef={featuresRef}
+                    featuresInView={featuresInView}
+                    containerVariants={containerVariants}
+                    itemVariants={itemVariants}
+                    stats={stats}
+                    features={features}
+                  />
+                </TabsContent>
+              </Tabs>
+            </motion.div>
+          ) : (
+            <LandingContent 
+              navigate={navigate}
+              heroRef={heroRef}
+              heroInView={heroInView}
+              statsRef={statsRef}
+              statsInView={statsInView}
+              featuresRef={featuresRef}
+              featuresInView={featuresInView}
+              containerVariants={containerVariants}
+              itemVariants={itemVariants}
+              stats={stats}
+              features={features}
+            />
+          )}
+        </div>
+    </Layout>
   );
 }
 
 // New Landing Content Component
 function LandingContent({ navigate, heroRef, heroInView, statsRef, statsInView, featuresRef, featuresInView, containerVariants, itemVariants, stats, features }) {
   return (
-    <>
-      {/* Hero Section - Completely Redesigned */}
+    <div className="space-y-32">
+      {/* Hero Section - Professional Two-Column Layout */}
       <motion.section
         ref={heroRef}
-        className="text-center mb-32 relative"
+        className="relative pt-8 pb-16 md:pt-16 md:pb-24 overflow-hidden"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        <motion.div className="mb-12" variants={itemVariants}>
-          <motion.div
-            initial={{ scale: 0, rotate: -180 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="mb-8"
-          >
-            <Badge className="px-8 py-4 text-base font-semibold bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-blue-400/30 hover:scale-110 transition-all duration-300 backdrop-blur-sm">
-              <Zap className="w-5 h-5 mr-3" />
-              Next-Generation Career Intelligence
-            </Badge>
-          </motion.div>
-          
-          <motion.h1 
-            className="text-6xl md:text-8xl font-black mb-8 relative leading-tight"
-            variants={itemVariants}
-          >
-            <span className="bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent">
-              Career Success
-            </span>
-            <br />
-            <span className="text-5xl md:text-7xl bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Powered by AI
-            </span>
-          </motion.h1>
-          
-          <motion.p 
-            className="text-xl md:text-2xl text-blue-100 max-w-4xl mx-auto leading-relaxed font-light mb-12"
-            variants={itemVariants}
-          >
-            Complete career platform with AI-powered resume analysis, smart job matching, interview prep, and career progression tracking.
-          </motion.p>
-        </motion.div>
-        
-        <motion.div 
-          className="flex flex-col sm:flex-row gap-8 justify-center items-center mb-20"
-          variants={itemVariants}
-        >
-          <motion.div
-            whileHover={{ scale: 1.02, y: -3 }}
-            className="relative"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur-xl opacity-30" />
-            <Button 
-              size="lg" 
-              onClick={() => navigate('/ats-checker')}
-              className="relative px-12 py-8 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-700 hover:from-blue-700 hover:to-purple-800 shadow-2xl border-0 rounded-2xl transition-all duration-200 hover:scale-105"
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          {/* Left Column: Copy & Actions */}
+          <div className="lg:col-span-7 space-y-6 text-left">
+            <motion.div variants={itemVariants}>
+              <Badge className="px-3 py-1 text-xs font-semibold bg-primary/10 text-primary border border-primary/20 hover:bg-primary/15 transition-all shadow-none rounded-full">
+                <Zap className="w-3.5 h-3.5 mr-2 text-primary" />
+                Next-Generation Career Intelligence
+              </Badge>
+            </motion.div>
+            
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground leading-[1.1] text-left flex flex-col items-start">
+              <SplitText text="Accelerate Your Career" className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground leading-[1.1] text-left" />
+              <span className="bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent mt-2 font-black">
+                <DecryptedText text="Powered by Advanced AI" speed={45} delay={700} />
+              </span>
+            </h1>
+            
+            <div className="text-lg text-muted-foreground max-w-xl leading-relaxed text-left">
+              <BlurText text="An all-in-one professional career acceleration platform. Clean resume analyzer, matching job lists, mock interactive interviews, and progression tracks." stagger={0.012} delay={200} />
+            </div>
+
+            <motion.div 
+              className="flex flex-col sm:flex-row gap-4 pt-2 justify-start items-stretch sm:items-center"
+              variants={itemVariants}
             >
-              <Sparkles className="w-6 h-6 mr-3" />
-              Start Your Transformation
-              <ArrowRight className="w-6 h-6 ml-3" />
-            </Button>
-          </motion.div>
-          
-          <Button 
-            variant="outline" 
-            size="lg"
-            onClick={() => navigate('/templates')}
-            className="px-12 py-8 text-xl font-semibold border-2 border-white/30 hover:border-white/50 bg-white/5 hover:bg-white/10 backdrop-blur-sm rounded-2xl transition-all duration-200 hover:scale-105"
-          >
-            <FileText className="w-6 h-6 mr-3" />
-            Explore Templates
-          </Button>
-        </motion.div>
+              <Button 
+                size="lg" 
+                onClick={() => navigate('/ats-checker')}
+                className="px-8 py-6 text-base font-bold bg-primary hover:bg-primary/95 text-primary-foreground rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.01] active:scale-100 transition-all flex items-center justify-center"
+              >
+                <Sparkles className="w-5 h-5 mr-2" />
+                Start Free Analysis
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                size="lg"
+                onClick={() => navigate('/templates')}
+                className="px-8 py-6 text-base font-semibold border-border hover:bg-secondary rounded-xl hover:scale-[1.01] active:scale-100 transition-all flex items-center justify-center"
+              >
+                <FileText className="w-5 h-5 mr-2 text-muted-foreground" />
+                Explore Templates
+              </Button>
+            </motion.div>
+          </div>
+
+          {/* Right Column: High-fidelity CSS Mockup */}
+          <div className="lg:col-span-5 relative w-full">
+            <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-blue-500/10 rounded-3xl blur-3xl opacity-50" />
+            <Card className="relative border border-border shadow-2xl rounded-2xl bg-card/65 backdrop-blur-md overflow-hidden transition-all duration-300">
+              <CardHeader className="border-b border-border pb-3 bg-muted/20 px-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
+                  </div>
+                  <Badge variant="outline" className="text-[10px] font-bold bg-background text-muted-foreground border-border px-2 py-0.5">ats_checker_flow.js</Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6 space-y-6 text-left">
+                {/* Score Summary */}
+                <div className="flex items-center justify-between bg-muted/40 p-4 rounded-xl border border-border/50">
+                  <div>
+                    <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">ATS Score Match</p>
+                    <h4 className="text-2xl font-extrabold text-foreground mt-0.5">87% <span className="text-[11px] font-semibold text-green-600 dark:text-green-400 bg-green-500/15 px-2 py-0.5 rounded ml-2">Strong Match</span></h4>
+                  </div>
+                  <div className="relative w-14 h-14 flex items-center justify-center">
+                    <svg className="absolute w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                      <path className="text-border" strokeWidth="2.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                      <path className="text-primary" strokeDasharray="87, 100" strokeWidth="2.5" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    </svg>
+                    <span className="text-xs font-bold text-foreground">87%</span>
+                  </div>
+                </div>
+
+                {/* Keyword Match list */}
+                <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground font-semibold">Skills Analysis</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="flex items-center space-x-2 bg-background p-2 rounded-lg border border-border text-xs">
+                      <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                      <span className="text-foreground font-medium">React / Next.js</span>
+                    </div>
+                    <div className="flex items-center space-x-2 bg-background p-2 rounded-lg border border-border text-xs">
+                      <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                      <span className="text-foreground font-medium">Tailwind CSS</span>
+                    </div>
+                    <div className="flex items-center space-x-2 bg-background p-2 rounded-lg border border-border text-xs">
+                      <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                      <span className="text-foreground font-medium">TypeScript</span>
+                    </div>
+                    <div className="flex items-center space-x-2 bg-background p-2 rounded-lg border border-border text-xs opacity-75">
+                      <div className="w-3.5 h-3.5 rounded-full border border-yellow-500/60 flex items-center justify-center text-[10px] text-yellow-600 dark:text-yellow-400 font-bold">!</div>
+                      <span className="text-foreground font-medium">Docker / CI-CD</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recommendations */}
+                <div className="space-y-2.5">
+                  <p className="text-xs text-muted-foreground font-semibold">Top Recommendations</p>
+                  <div className="space-y-1.5 text-xs">
+                    <div className="p-2 bg-primary/5 rounded border border-primary/20 text-muted-foreground">
+                      📈 Add quantitative metrics in experience bullets (+12 points)
+                    </div>
+                    <div className="p-2 bg-secondary/50 rounded border border-border text-muted-foreground">
+                      🛠️ Include cloud certifications or DevOps skills (+8 points)
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </motion.section>
 
-      {/* Stats Section - Enhanced */}
+      {/* Stats Section - Clean & Elegant */}
       <motion.section 
         ref={statsRef}
-        className="mb-32"
-        initial={{ opacity: 0, y: 50 }}
-        animate={statsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-        transition={{ duration: 0.8 }}
+        className="py-6"
+        initial={{ opacity: 0, y: 30 }}
+        animate={statsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+        transition={{ duration: 0.6 }}
       >
         <div className="text-center mb-16">
           <motion.h2 
-            className="text-4xl md:text-5xl font-bold text-white mb-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={statsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ delay: 0.2 }}
+            className="text-3xl md:text-4xl font-bold text-foreground mb-4 tracking-tight"
+            initial={{ opacity: 0, y: 15 }}
+            animate={statsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
+            transition={{ delay: 0.1 }}
           >
             Trusted by Professionals Worldwide
           </motion.h2>
           <motion.p 
-            className="text-xl text-blue-200 max-w-3xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={statsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ delay: 0.4 }}
+            className="text-base text-muted-foreground max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 15 }}
+            animate={statsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
+            transition={{ delay: 0.2 }}
           >
             Join thousands who've accelerated their careers with our AI-powered platform
           </motion.p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => {
             const IconComponent = stat.icon;
             return (
               <motion.div 
                 key={index} 
                 className="text-center group"
-                initial={{ opacity: 0, y: 30, scale: 0.8 }}
-                animate={statsInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 30, scale: 0.8 }}
-                transition={{ delay: index * 0.1 + 0.6, duration: 0.6 }}
-                whileHover={{ scale: 1.05, y: -10 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={statsInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+                transition={{ delay: index * 0.05 + 0.3, duration: 0.4 }}
+                whileHover={{ y: -5 }}
               >
-                <Card className="p-8 bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-sm hover:from-white/15 hover:to-white/10 transition-all duration-300 group-hover:shadow-2xl">
-                  <motion.div
-                    className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center"
-                    whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.8 }}
-                  >
-                    <IconComponent className="w-8 h-8 text-white" />
-                  </motion.div>
+                <Card className="p-6 bg-card border border-border shadow-sm hover:shadow-md hover:border-primary/45 transition-all duration-300">
+                  <div className="w-12 h-12 mx-auto mb-4 bg-primary/10 text-primary rounded-xl flex items-center justify-center transition-colors group-hover:bg-primary group-hover:text-primary-foreground duration-300">
+                    <IconComponent className="w-5 h-5" />
+                  </div>
                   
-                  <motion.div 
-                    className="text-5xl md:text-6xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-3"
-                    initial={{ scale: 0 }}
-                    animate={statsInView ? { scale: 1 } : { scale: 0 }}
-                    transition={{ delay: index * 0.2 + 0.8, duration: 0.6 }}
-                  >
+                  <div className="text-4xl font-black text-foreground mb-2">
                     {statsInView && (
                       <CountUp
                         end={stat.number}
-                        duration={2.5}
-                        delay={index * 0.2}
+                        duration={2.0}
+                        delay={index * 0.1}
                         decimals={stat.number % 1 !== 0 ? 1 : 0}
                       />
                     )}
                     {stat.suffix}
-                  </motion.div>
-                  <div className="text-white font-semibold text-lg">{stat.label}</div>
+                  </div>
+                  <div className="text-muted-foreground text-sm font-semibold">{stat.label}</div>
                 </Card>
               </motion.div>
             );
@@ -388,83 +397,75 @@ function LandingContent({ navigate, heroRef, heroInView, statsRef, statsInView, 
         </div>
       </motion.section>
 
-      {/* Features Section - Completely New */}
+      {/* Features Section - Clean modern SaaS cards */}
       <motion.section 
         ref={featuresRef}
-        className="mb-32"
+        className="py-6"
         initial={{ opacity: 0 }}
         animate={featuresInView ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.6 }}
       >
         <div className="text-center mb-16">
           <motion.h2 
-            className="text-4xl md:text-5xl font-bold mb-6"
-            initial={{ opacity: 0, y: 30 }}
-            animate={featuresInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-            transition={{ delay: 0.2 }}
+            className="text-3xl md:text-4xl font-bold mb-4 tracking-tight"
+            initial={{ opacity: 0, y: 15 }}
+            animate={featuresInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
+            transition={{ delay: 0.1 }}
           >
-            <span className="bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent">
-              Complete Career Platform
-            </span>
+            Complete Career Platform
           </motion.h2>
           <motion.p 
-            className="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 30 }}
-            animate={featuresInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-            transition={{ delay: 0.4 }}
+            className="text-base text-muted-foreground max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 15 }}
+            animate={featuresInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
+            transition={{ delay: 0.2 }}
           >
             Everything you need to accelerate your career - from resume optimization to interview success
           </motion.p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, index) => {
             const IconComponent = feature.icon;
             return (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 50, rotateX: -15 }}
-                animate={featuresInView ? { opacity: 1, y: 0, rotateX: 0 } : { opacity: 0, y: 50, rotateX: -15 }}
-                transition={{ delay: index * 0.1 + 0.6, duration: 0.8 }}
-                whileHover={{ 
-                  scale: 1.02, 
-                  y: -8
-                }}
-                className="group cursor-pointer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={featuresInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ delay: index * 0.05 + 0.3, duration: 0.5 }}
+                whileHover={{ y: -6 }}
+                className="group cursor-pointer relative"
                 onClick={feature.action}
               >
-                <Card className="p-8 h-full bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-sm hover:from-white/15 hover:to-white/10 transition-all duration-300 relative overflow-hidden">
-                  {/* Animated Background */}
-                  <motion.div
-                    className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
-                  />
-                  
-                  {/* Simple Hover Effect */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
-                  
-                  <div className="relative z-10">
-                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-6 shadow-xl group-hover:shadow-2xl transition-shadow duration-300`}>
-                      <IconComponent className="w-8 h-8 text-white" />
+                {/* Glowing neon backdrop blur */}
+                <div className={`absolute -inset-0.5 bg-gradient-to-r ${feature.color} rounded-2xl opacity-0 group-hover:opacity-15 blur-xl transition-opacity duration-500`} />
+                
+                <Card className="p-6 h-full bg-card border border-border group-hover:border-foreground/20 transition-all duration-300 flex flex-col justify-between hover:shadow-2xl relative overflow-hidden z-10">
+                  <div className="space-y-4">
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} text-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300`}>
+                      <IconComponent className="w-5 h-5" />
                     </div>
                     
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-xl font-bold text-white">{feature.title}</h3>
-                      <Badge className={`bg-gradient-to-r ${feature.color} text-white border-0 text-xs`}>
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300">{feature.title}</h3>
+                      <Badge className={`bg-gradient-to-r ${feature.color} text-white hover:${feature.color} text-[10px] font-bold shadow-none px-2.5 py-0.5 border-0`}>
                         {feature.stats}
                       </Badge>
                     </div>
                     
-                    <p className="text-blue-100 leading-relaxed mb-6 text-sm">{feature.description}</p>
-                    
+                    <p className="text-muted-foreground leading-relaxed text-sm text-left">{feature.description}</p>
+                  </div>
+                  
+                  <div className="pt-6">
                     <Button 
-                      className={`w-full bg-gradient-to-r ${feature.color} hover:opacity-90 border-0 text-white font-semibold transition-opacity duration-200`}
+                      className={`w-full bg-secondary text-secondary-foreground group-hover:bg-gradient-to-r group-hover:${feature.color} group-hover:text-white font-semibold border border-border group-hover:border-0 shadow-none transition-all duration-300`}
                       onClick={(e) => {
                         e.stopPropagation();
                         feature.action();
                       }}
                     >
-                      {feature.actionText}
-                      <ArrowRight className="w-4 h-4 ml-2" />
+                      <span>{feature.actionText}</span>
+                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </div>
                 </Card>
@@ -476,75 +477,68 @@ function LandingContent({ navigate, heroRef, heroInView, statsRef, statsInView, 
 
       {/* Interactive Platform Overview */}
       <motion.section 
-        className="mb-32"
+        className="py-6"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.6 }}
         viewport={{ once: true }}
       >
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight text-foreground">
             How It Works
           </h2>
           <motion.p
-            className="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
+            className="text-base text-muted-foreground max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
             viewport={{ once: true }}
           >
             Simple 3-step process to transform your career
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column - Core Features */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             {[
               {
                 icon: Brain,
                 title: "AI Resume Analysis",
                 desc: "Get instant ATS compatibility scores and optimization suggestions",
                 action: () => navigate('/ats-checker'),
-                color: "from-blue-500 to-cyan-500"
+                color: "bg-primary/10 text-primary border-primary/20"
               },
               {
                 icon: Target,
                 title: "Job Matching Engine",
                 desc: "Find perfect job matches based on your skills and experience",
                 action: () => navigate('/job-analysis'),
-                color: "from-purple-500 to-pink-500"
-              },
-              {
-                icon: TrendingUp,
-                title: "Career Roadmaps",
-                desc: "Plan your career progression with personalized milestones",
-                action: () => navigate('/career'),
-                color: "from-green-500 to-emerald-500"
+                color: "bg-primary/10 text-primary border-primary/20"
               }
             ].map((item, index) => {
               const IconComponent = item.icon;
               return (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, x: -50 }}
+                  initial={{ opacity: 0, x: -15 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.2, duration: 0.6 }}
+                  transition={{ delay: index * 0.1, duration: 0.4 }}
                   viewport={{ once: true }}
-                  whileHover={{ x: 5 }}
+                  whileHover={{ x: 4 }}
                   className="group cursor-pointer"
                   onClick={item.action}
                 >
-                  <Card className="p-6 bg-gradient-to-r from-white/10 to-white/5 border-white/20 backdrop-blur-sm hover:from-white/15 hover:to-white/10 transition-all duration-300">
-                    <div className="flex items-center space-x-4">
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center transition-transform duration-200 group-hover:scale-110`}>
-                        <IconComponent className="w-6 h-6 text-white" />
+                  <Card className="p-4 bg-card border border-border shadow-sm hover:border-primary/45 transition-all duration-300">
+                    <div className="flex items-center space-x-4 text-left">
+                      <div className={`w-10 h-10 rounded-lg ${item.color} flex items-center justify-center shrink-0`}>
+                        <IconComponent className="w-5 h-5" />
                       </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
-                        <p className="text-blue-100 text-sm">{item.desc}</p>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-bold text-foreground mb-0.5">{item.title}</h3>
+                        <p className="text-muted-foreground text-xs truncate">{item.desc}</p>
                       </div>
-                      <ArrowRight className="w-5 h-5 text-blue-300 group-hover:text-white transition-colors" />
+                      <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                     </div>
                   </Card>
                 </motion.div>
@@ -553,52 +547,52 @@ function LandingContent({ navigate, heroRef, heroInView, statsRef, statsInView, 
           </div>
 
           {/* Right Column - Advanced Features */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             {[
               {
                 icon: Users,
                 title: "Interview Practice",
                 desc: "Mock interviews with AI feedback and company-specific prep",
                 action: () => navigate('/interview-prep'),
-                color: "from-orange-500 to-red-500"
+                color: "bg-primary/10 text-primary border-primary/20"
               },
               {
                 icon: BarChart3,
                 title: "Progress Analytics",
                 desc: "Track your improvement with detailed performance metrics",
                 action: () => navigate('/analytics'),
-                color: "from-indigo-500 to-purple-500"
+                color: "bg-primary/10 text-primary border-primary/20"
               },
               {
                 icon: FileText,
                 title: "Professional Templates",
                 desc: "ATS-optimized resume templates designed by experts",
                 action: () => navigate('/templates'),
-                color: "from-pink-500 to-rose-500"
+                color: "bg-primary/10 text-primary border-primary/20"
               }
             ].map((item, index) => {
               const IconComponent = item.icon;
               return (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, x: 50 }}
+                  initial={{ opacity: 0, x: 15 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.2, duration: 0.6 }}
+                  transition={{ delay: index * 0.1, duration: 0.4 }}
                   viewport={{ once: true }}
-                  whileHover={{ x: -5 }}
+                  whileHover={{ x: -4 }}
                   className="group cursor-pointer"
                   onClick={item.action}
                 >
-                  <Card className="p-6 bg-gradient-to-l from-white/10 to-white/5 border-white/20 backdrop-blur-sm hover:from-white/15 hover:to-white/10 transition-all duration-300">
-                    <div className="flex items-center space-x-4">
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center transition-transform duration-200 group-hover:scale-110`}>
-                        <IconComponent className="w-6 h-6 text-white" />
+                  <Card className="p-4 bg-card border border-border shadow-sm hover:border-primary/45 transition-all duration-300">
+                    <div className="flex items-center space-x-4 text-left">
+                      <div className={`w-10 h-10 rounded-lg ${item.color} flex items-center justify-center shrink-0`}>
+                        <IconComponent className="w-5 h-5" />
                       </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
-                        <p className="text-blue-100 text-sm">{item.desc}</p>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-bold text-foreground mb-0.5">{item.title}</h3>
+                        <p className="text-muted-foreground text-xs truncate">{item.desc}</p>
                       </div>
-                      <ArrowRight className="w-5 h-5 text-blue-300 group-hover:text-white transition-colors" />
+                      <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                     </div>
                   </Card>
                 </motion.div>
@@ -609,36 +603,36 @@ function LandingContent({ navigate, heroRef, heroInView, statsRef, statsInView, 
 
         {/* Quick Action Center */}
         <motion.div
-          className="mt-16 text-center"
-          initial={{ opacity: 0, y: 30 }}
+          className="mt-12 text-center"
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.6 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
           viewport={{ once: true }}
         >
-          <Card className="p-8 bg-gradient-to-r from-white/10 via-blue-500/10 to-purple-500/10 border-white/20 backdrop-blur-sm">
-            <h3 className="text-2xl font-bold text-white mb-6">Start Your Career Transformation</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="p-6 bg-muted/40 border border-border/80 rounded-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-6 text-left">
+            <div>
+              <h3 className="text-lg font-bold text-foreground">Start Your Career Transformation</h3>
+              <p className="text-sm text-muted-foreground">Select an option to immediately test the platform.</p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button 
-                className="bg-gradient-to-r from-blue-600 to-purple-700 hover:from-blue-700 hover:to-purple-800 text-white font-semibold py-3"
                 onClick={() => navigate('/ats-checker')}
+                className="bg-primary hover:bg-primary/95 text-primary-foreground font-semibold px-5 py-2.5 rounded-lg shadow-sm"
               >
-                <Brain className="w-5 h-5 mr-2" />
                 Analyze Resume
               </Button>
               <Button 
                 variant="outline"
-                className="border-white/30 text-white hover:bg-white/10 font-semibold py-3"
+                className="border-border hover:bg-secondary text-foreground font-semibold px-5 py-2.5 rounded-lg"
                 onClick={() => navigate('/job-analysis')}
               >
-                <Target className="w-5 h-5 mr-2" />
                 Find Jobs
               </Button>
               <Button 
                 variant="outline"
-                className="border-white/30 text-white hover:bg-white/10 font-semibold py-3"
+                className="border-border hover:bg-secondary text-foreground font-semibold px-5 py-2.5 rounded-lg"
                 onClick={() => navigate('/interview-prep')}
               >
-                <Users className="w-5 h-5 mr-2" />
                 Practice Interview
               </Button>
             </div>
@@ -646,48 +640,46 @@ function LandingContent({ navigate, heroRef, heroInView, statsRef, statsInView, 
         </motion.div>
       </motion.section>
 
-      {/* Final CTA - Optimized */}
+      {/* Final CTA */}
       <motion.section
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.5 }}
         viewport={{ once: true }}
         className="text-center"
       >
-        <Card className="border border-white/30 shadow-2xl bg-gradient-to-br from-white/10 via-blue-500/10 to-purple-500/10 backdrop-blur-sm overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5" />
-          
-          <CardContent className="py-16 relative z-10">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
+        <Card className="border border-border shadow-xl bg-gradient-to-tr from-primary/5 via-background to-primary/5 overflow-hidden relative rounded-2xl">
+          <CardContent className="py-16 px-6 relative z-10 space-y-6">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">
               Ready to Transform Your Career?
             </h2>
             
-            <p className="text-xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed">
-              Join 75,000+ professionals who've accelerated their careers with AI-powered insights
+            <p className="text-base text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+              Join thousands of professionals who have accelerated their careers and bypassed recruiters with AI-powered insights.
             </p>
             
-            <div className="space-y-6">
+            <div className="flex flex-col items-center justify-center gap-6">
               <Button 
                 size="lg" 
                 onClick={() => navigate('/ats-checker')}
-                className="px-12 py-6 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-700 hover:from-blue-700 hover:to-purple-800 shadow-2xl border-0 rounded-2xl transition-all duration-300 hover:scale-105"
+                className="px-10 py-6 text-base font-bold bg-primary hover:bg-primary/95 text-primary-foreground shadow-lg shadow-primary/20 rounded-xl hover:scale-[1.01] active:scale-100 transition-all flex items-center"
               >
-                <Sparkles className="w-6 h-6 mr-3" />
+                <Sparkles className="w-5 h-5 mr-2" />
                 Start Free Analysis
-                <ArrowRight className="w-6 h-6 ml-3" />
+                <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
               
-              <div className="flex flex-wrap items-center justify-center gap-6 text-blue-200 text-sm">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-400" />
+              <div className="flex flex-wrap items-center justify-center gap-6 text-muted-foreground text-xs">
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle className="w-3.5 h-3.5 text-green-500" />
                   <span>100% Free</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-400" />
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle className="w-3.5 h-3.5 text-green-500" />
                   <span>No Sign-up Required</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-400" />
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle className="w-3.5 h-3.5 text-green-500" />
                   <span>Instant Results</span>
                 </div>
               </div>
@@ -695,6 +687,6 @@ function LandingContent({ navigate, heroRef, heroInView, statsRef, statsInView, 
           </CardContent>
         </Card>
       </motion.section>
-    </>
+    </div>
   );
 }

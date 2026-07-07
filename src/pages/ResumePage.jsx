@@ -5,11 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { FileUpload } from '@/components/FileUpload';
-import { ArrowRight, ArrowLeft, FileText } from 'lucide-react';
+import { ArrowRight, ArrowLeft, FileText, AlertCircle, X } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import Layout from '@/components/Layout';
 import { StepWizard, resumeAnalysisSteps } from '@/components/StepWizard';
 import { extractTextFromFile } from '@/lib/fileParser';
+import { validateResumeText } from '@/utils/validation';
+import { aiServiceManager } from '@/services/ai/AIServiceManager';
 
 export default function ResumePage() {
   const { state, setResumeText } = useAppContext();
@@ -30,6 +32,13 @@ export default function ResumePage() {
     
     try {
       const text = await extractTextFromFile(file);
+      const validation = validateResumeText(text);
+      if (!validation.isValid) {
+        setError(validation.error);
+        setResumeInput('');
+        updateWordCount('');
+        return;
+      }
       setResumeInput(text);
       updateWordCount(text);
     } catch (err) {
@@ -39,92 +48,80 @@ export default function ResumePage() {
     }
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!resumeInput.trim()) {
       setError('Please upload a resume or enter resume text');
       return;
     }
     
-    setResumeText(resumeInput.trim());
-    navigate('/job-description');
+    setIsUploading(true);
+    setError('');
+    
+    try {
+      const validation = await aiServiceManager.validateResume(resumeInput);
+      if (!validation.isValid) {
+        setError(validation.error);
+        setIsUploading(false);
+        return;
+      }
+      
+      setResumeText(resumeInput.trim());
+      navigate('/job-description');
+    } catch (err) {
+      setError(err.message || 'An error occurred during resume validation.');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute -top-40 -left-40 w-80 h-80 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.3, 1],
-            rotate: [0, 180, 360],
-            x: [0, 50, 0],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-      </div>
-
-      <div className="absolute top-4 right-4 z-50 flex items-center gap-3">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => navigate('/')}
-            className="group hover:scale-105 transition-all duration-200 bg-background/80 backdrop-blur-sm border-primary/20 hover:border-primary/40"
-          >
-            <motion.div
-              className="mr-2"
-              whileHover={{ rotate: -10 }}
-              transition={{ duration: 0.2 }}
-            >
-              🏠
-            </motion.div>
-            Home
-          </Button>
-        </motion.div>
-        <ThemeToggle />
-      </div>
-      
-      <div className="max-w-6xl mx-auto px-4 py-8 relative z-10">
+    <Layout>
+      <div className="max-w-6xl mx-auto px-4 py-10 relative z-10">
         <StepWizard currentStep={2} steps={resumeAnalysisSteps} />
+
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3 text-red-500 text-sm"
+          >
+            <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+            <div className="flex-1 font-medium">{error}</div>
+            <button onClick={() => setError('')} className="hover:opacity-80 transition-opacity">
+              <X className="w-4 h-4 mt-0.5" />
+            </button>
+          </motion.div>
+        )}
         
         {/* Header */}
         <motion.div
           className="text-center mb-12"
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.4 }}
         >
           <motion.h1 
-            className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent"
-            initial={{ scale: 0.9 }}
+            className="text-3xl md:text-4xl font-extrabold mb-4 tracking-tight text-foreground"
+            initial={{ scale: 0.98 }}
             animate={{ scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.4 }}
           >
-            📄 Upload Your Resume
+            Upload Your Resume
           </motion.h1>
           <motion.p 
-            className="text-muted-foreground text-lg max-w-2xl mx-auto"
+            className="text-muted-foreground text-base max-w-2xl mx-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
+            transition={{ delay: 0.2 }}
           >
             Upload your resume file or paste the text directly. Our AI will analyze every detail to maximize your ATS compatibility.
           </motion.p>
         </motion.div>
         
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
           className="grid grid-cols-1 lg:grid-cols-2 gap-8"
         >
           <FileUpload
@@ -137,11 +134,11 @@ export default function ResumePage() {
           />
 
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 15 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <Card className="h-full border-0 shadow-xl bg-card/80 backdrop-blur-sm">
+            <Card className="h-full border border-border shadow-sm bg-card">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -152,7 +149,7 @@ export default function ResumePage() {
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="text-sm text-muted-foreground bg-primary/10 px-3 py-1 rounded-full"
+                      className="text-xs text-muted-foreground bg-primary/10 px-3 py-1 rounded-full"
                     >
                       {wordCount} words
                     </motion.div>
@@ -194,14 +191,14 @@ export default function ResumePage() {
 
         <motion.div 
           className="flex justify-between mt-8"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
         >
           <Button 
             variant="outline" 
             onClick={() => navigate('/api-key')}
-            className="group hover:scale-105 transition-all duration-200"
+            className="group font-semibold border-border hover:bg-secondary"
           >
             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
             Back
@@ -210,13 +207,13 @@ export default function ResumePage() {
           <Button 
             onClick={handleContinue}
             disabled={!resumeInput.trim()}
-            className="group hover:scale-105 transition-all duration-200 bg-gradient-to-r from-primary to-primary-glow"
+            className="group font-semibold bg-primary hover:bg-primary/95 text-primary-foreground rounded-lg shadow-sm"
           >
             Continue
             <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
           </Button>
         </motion.div>
       </div>
-    </div>
+    </Layout>
   );
 }

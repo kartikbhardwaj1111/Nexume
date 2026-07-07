@@ -29,6 +29,11 @@ export class EnhancedAnalysisEngine {
       // Step 1: Basic AI analysis
       const baseAnalysis = await aiServiceManager.analyzeResume(resumeText, jobDescription);
 
+      // If document validation failed, immediately return base analysis
+      if (baseAnalysis.overall_score === 0 && baseAnalysis.errors?.length > 0) {
+        return baseAnalysis;
+      }
+
       // Step 2: Industry-specific analysis
       let industryAnalysis = null;
       if (includeIndustryAnalysis) {

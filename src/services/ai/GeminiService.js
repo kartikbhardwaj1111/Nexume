@@ -118,6 +118,46 @@ class GeminiService {
   }
 
   /**
+   * Generates a vector embedding for a given text using text-embedding-004
+   */
+  async embedText(text) {
+    if (!this.isInitialized) {
+      await this.initialize();
+    }
+    if (!this.isInitialized || !this.genAI) {
+      throw new Error('Gemini AI service is not initialized');
+    }
+
+    try {
+      const embeddingModel = this.genAI.getGenerativeModel({ model: 'text-embedding-004' });
+      const result = await embeddingModel.embedContent(text);
+      if (result && result.embedding && result.embedding.values) {
+        return result.embedding.values;
+      }
+      throw new Error('Failed to retrieve embedding values');
+    } catch (error) {
+      console.error('Error generating text embedding:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Generates vector embeddings for a batch of texts
+   */
+  async embedBatch(texts) {
+    if (!Array.isArray(texts)) {
+      throw new Error('Input must be an array of texts');
+    }
+    
+    const embeddings = [];
+    for (const text of texts) {
+      const embedding = await this.embedText(text);
+      embeddings.push(embedding);
+    }
+    return embeddings;
+  }
+
+  /**
    * Analyze resume with job description
    */
   async analyzeResume(resumeText, jobDescription) {
@@ -283,7 +323,7 @@ RESUME:
 ${resumeText}
 
 JOB DESCRIPTION:
-${jobDescription}
+${jobDescription || "Not provided (General Resume Audit). Perform a general resume formatting, readability, and content structure audit. Identify potential issues (such as missing standard sections, lack of action verbs or quantifiable impact, poor structure, or formatting problems) and compare the candidate's core skills and experience against general industry-standard resume expectations rather than a specific job description."}
 
 Please analyze and provide a JSON response with the following structure:
 {

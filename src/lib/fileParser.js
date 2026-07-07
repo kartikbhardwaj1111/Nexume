@@ -36,8 +36,22 @@ async function extractTextFromPdf(file) {
       fullText += pageText + '\n';
     }
     
-    return fullText.trim();
+    const trimmedText = fullText.trim();
+    if (trimmedText.length === 0) {
+      throw new Error("No readable text found. The document might be empty or image-only (scanned). Please upload a text-searchable PDF.");
+    }
+    
+    return trimmedText;
   } catch (error) {
+    if (error.name === 'PasswordException') {
+      throw new Error("This PDF is password-protected. Please remove the password protection and try again.");
+    }
+    if (error.name === 'InvalidPDFException') {
+      throw new Error("This PDF is corrupted or invalid. Please ensure it is a valid PDF.");
+    }
+    if (error.message && error.message.includes("No readable text")) {
+      throw error;
+    }
     throw new Error('Failed to parse PDF file. Please ensure it\'s a valid PDF with text content.');
   }
 }

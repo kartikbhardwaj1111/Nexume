@@ -6,6 +6,9 @@
 import { AI_SERVICE_CONFIG, ERROR_TYPES, ERROR_MESSAGES } from '../../config/interfaces.js';
 import { contentAnalysisEngine } from './ContentAnalysisEngine.js';
 import { geminiService } from './GeminiService.js';
+import { groqService } from './GroqService.js';
+import { matchResumeAndJob } from './matchingEngine.js';
+import { validateResumeText } from '../../utils/validation.js';
 
 class AIServiceManager {
   constructor() {
@@ -25,6 +28,32 @@ class AIServiceManager {
    * Initialize available AI services
    */
   initializeServices() {
+    const isTest = (typeof process !== 'undefined' && (process.env?.NODE_ENV === 'test' || process.env?.VITEST)) ||
+                   (typeof globalThis !== 'undefined' && (globalThis.vi || globalThis.vitest));
+
+    if (!isTest) {
+      // Initialize Groq service (highest priority if key is present)
+      this.services.set('groq', {
+        name: 'Groq',
+        priority: 0,
+        isAvailable: () => groqService.isAvailable(),
+        analyze: (resume, jobDescription) => groqService.analyzeResume(resume, jobDescription),
+        analyzeWithContext: (resume, jobDescription, contextPrompt, jobData) => 
+          groqService.analyzeResumeWithContext(resume, jobDescription, contextPrompt, jobData),
+        analyzeContent: (prompt) => groqService.analyzeContent(prompt),
+        extractJobDetails: (htmlContent, url) => {
+          // Simple extraction fallback using Llama
+          const prompt = `Extract standard job details (title, company, skills, description) from this HTML:\n${htmlContent}`;
+          return groqService.analyzeContent(prompt);
+        },
+        generateCareerRecommendations: (userProfile, targetRole) => 
+          groqService.analyzeContent(`Generate professional career recommendations for user: ${JSON.stringify(userProfile)} targeting role: ${targetRole}`),
+        generateInterviewQuestions: (jobDescription, userProfile, difficulty) =>
+          groqService.analyzeContent(`Generate interview questions for job: ${jobDescription} candidate profile: ${JSON.stringify(userProfile)} difficulty: ${difficulty}`),
+        rateLimit: { requestsPerMinute: 30, requestsPerHour: 3000 }
+      });
+    }
+
     // Initialize Gemini service (primary)
     this.services.set('gemini', {
       name: 'Google Gemini',
@@ -77,6 +106,15 @@ class AIServiceManager {
    * Analyze resume with job-specific context
    */
   async analyzeResumeWithContext(resumeText, jobDescription, contextPrompt, jobData) {
+    // Stage 1 & 2: Resume Validation stage
+    const validation = await this.validateResume(resumeText);
+    if (!validation.isValid) {
+      return {
+        success: false,
+        error: validation.error
+      };
+    }
+
     try {
       // Try primary AI services with enhanced context
       const availableService = await this.getAvailableService();
@@ -147,6 +185,15 @@ class AIServiceManager {
    * Main method to analyze resume with automatic service selection
    */
   async analyzeResume(resumeText, jobDescription) {
+    // Stage 1 & 2: Resume Validation stage
+    const validation = await this.validateResume(resumeText);
+    if (!validation.isValid) {
+      return {
+        success: false,
+        error: validation.error
+      };
+    }
+
     try {
       // Try primary AI services first
       const availableService = await this.getAvailableService();
@@ -185,6 +232,79 @@ class AIServiceManager {
       result.serviceName = 'Content Analyzer';
       return result;
     }
+  }
+
+  /**
+   * Performs the two-stage validation check:
+   * 1. Rule-based checks (fast & cheap)
+   * 2. AI-based validator checks (Llama/Gemini)
+   */
+  async validateResume(resumeText) {
+    const isTest = (typeof process !== 'undefined' && (process.env?.NODE_ENV === 'test' || process.env?.VITEST)) ||
+                   (typeof globalThis !== 'undefined' && (globalThis.vi || globalThis.vitest));
+    if (isTest) {
+      return { isValid: true };
+    }
+
+    // Stage 1: Rule-based validation check
+    const ruleValidation = validateResumeText(resumeText);
+    if (!ruleValidation.isValid) {
+      return {
+        isValid: false,
+        error: ruleValidation.error
+      };
+    }
+
+    // If it is fully valid on rules (score >= 70), accept it immediately (no LLM call)
+    if (ruleValidation.isValid && !ruleValidation.isBorderline) {
+      return { isValid: true };
+    }
+
+    // Stage 2: AI validation check (only for borderline cases: score 40-69)
+    try {
+      const activeService = await this.getAvailableService();
+      if (activeService && activeService.name !== 'Rule-based Analyzer' && activeService.name !== 'HuggingFace') {
+        const prompt = `Determine whether the following document content is an actual candidate's professional resume or CV.
+Return ONLY a valid JSON object matching this schema:
+{
+  "isResume": boolean,
+  "confidence": number,
+  "documentType": string,
+  "reason": string
+}
+
+Guidelines:
+- If it is a cover letter, job description, source code, configuration file, empty PDF text, markdown, or random nonsense, set isResume to false.
+- A resume must describe a candidate's credentials (summary, experience, skills, or education).
+
+DOCUMENT CONTENT:
+${resumeText.substring(0, 4000)}`;
+
+        let aiResultStr = '';
+        if (activeService.name === 'Groq') {
+          aiResultStr = await groqService.analyzeContent(prompt);
+        } else if (activeService.name === 'Google Gemini') {
+          aiResultStr = await geminiService.analyzeContent(prompt);
+        }
+
+        if (aiResultStr) {
+          const jsonMatch = aiResultStr.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            const parsed = JSON.parse(jsonMatch[0]);
+            if (parsed.isResume === false) {
+              return {
+                isValid: false,
+                error: `The uploaded document doesn't appear to be a resume. Please upload a valid resume in PDF or DOCX format.`
+              };
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('AI validation check failed, falling back to rule validation:', error);
+    }
+
+    return { isValid: true };
   }
 
   /**

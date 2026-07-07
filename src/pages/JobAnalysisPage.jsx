@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Alert, AlertDescription } from '../components/ui/alert';
@@ -20,6 +21,9 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Layout from '../components/Layout';
+import SplitText from '../components/animations/SplitText';
+import BlurText from '../components/animations/BlurText';
+import DecryptedText from '../components/animations/DecryptedText';
 
 const JobAnalysisPage = () => {
   const navigate = useNavigate();
@@ -154,9 +158,9 @@ const JobAnalysisPage = () => {
               <div className="flex items-center space-x-2">
                 <div className={`
                   flex items-center justify-center w-8 h-8 rounded-full border-2
-                  ${isActive ? 'border-blue-500 bg-blue-500 text-white' : 
-                    isCompleted ? 'border-green-500 bg-green-500 text-white' : 
-                    'border-gray-300 bg-white text-gray-400'}
+                  ${isActive ? 'border-primary bg-primary text-primary-foreground' : 
+                    isCompleted ? 'bg-green-500 border-green-500 text-white' : 
+                    'border-border bg-background text-muted-foreground'}
                 `}>
                   {isCompleted ? (
                     <CheckCircle className="h-5 w-5" />
@@ -164,10 +168,10 @@ const JobAnalysisPage = () => {
                     <Icon className="h-4 w-4" />
                   )}
                 </div>
-                <span className={`text-sm font-medium ${
-                  isActive ? 'text-blue-600' : 
-                  isCompleted ? 'text-green-600' : 
-                  'text-gray-400'
+                <span className={`text-sm font-semibold ${
+                  isActive ? 'text-primary' : 
+                  isCompleted ? 'text-green-600 dark:text-green-400' : 
+                  'text-muted-foreground'
                 }`}>
                   {step.label}
                 </span>
@@ -189,11 +193,12 @@ const JobAnalysisPage = () => {
     return (
       <div className="space-y-8">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold">Job-Tailored Resume Analysis</h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Get personalized recommendations by analyzing your resume against a specific job posting. 
-            Enter a job URL or paste the job description to get started.
-          </p>
+          <h1 className="text-3xl font-bold flex justify-center">
+            <SplitText text="Job-Tailored Resume Analysis" />
+          </h1>
+          <div className="text-muted-foreground max-w-2xl mx-auto">
+            <BlurText text="Get personalized recommendations by analyzing your resume against a specific job posting. Enter a job URL or paste the job description to get started." stagger={0.01} delay={200} />
+          </div>
         </div>
 
         <JobUrlInput
@@ -242,10 +247,12 @@ const JobAnalysisPage = () => {
   const renderPreviewStep = () => (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold">Review Job Details</h1>
-        <p className="text-muted-foreground">
-          Please review the extracted job information before proceeding with the analysis
-        </p>
+        <h1 className="text-3xl font-bold flex justify-center">
+          <SplitText text="Review Job Details" />
+        </h1>
+        <div className="text-muted-foreground">
+          <BlurText text="Please review the extracted job information before proceeding with the analysis" stagger={0.01} delay={200} />
+        </div>
       </div>
 
       <JobPreview
@@ -268,14 +275,14 @@ const JobAnalysisPage = () => {
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold flex items-center justify-center gap-2">
           <Sparkles className="h-8 w-8 text-blue-500" />
-          Analyzing Your Resume
+          <SplitText text="Analyzing Your Resume" />
         </h1>
-        <p className="text-muted-foreground">
-          Comparing your resume against the job requirements...
-        </p>
+        <div className="text-muted-foreground">
+          <BlurText text="Comparing your resume against the job requirements..." stagger={0.015} delay={200} />
+        </div>
       </div>
 
-      <Card className="max-w-md mx-auto">
+      <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle className="text-center">Analysis in Progress</CardTitle>
           <CardDescription className="text-center">
@@ -294,7 +301,7 @@ const JobAnalysisPage = () => {
       </Card>
 
       {jobData && (
-        <Card className="max-w-md mx-auto">
+        <Card className="max-w-2xl mx-auto">
           <CardHeader>
             <CardTitle className="text-sm">Analyzing Against</CardTitle>
           </CardHeader>
@@ -318,15 +325,23 @@ const JobAnalysisPage = () => {
       { path: '/', label: 'Home' },
       { path: '/job-analysis', label: 'Find Matching Jobs' }
     ]}>
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-        <div className="container mx-auto px-4 py-8">
-          {renderStepIndicator()}
-          
-          <div className="max-w-4xl mx-auto">
-            {currentStep === 'input' && renderInputStep()}
-            {currentStep === 'preview' && renderPreviewStep()}
-            {currentStep === 'analysis' && renderAnalysisStep()}
-          </div>
+      <div className="max-w-7xl mx-auto px-4 py-10 relative z-10">
+        {renderStepIndicator()}
+        
+        <div className="mt-6">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.2 }}
+            >
+              {currentStep === 'input' && renderInputStep()}
+              {currentStep === 'preview' && renderPreviewStep()}
+              {currentStep === 'analysis' && renderAnalysisStep()}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </Layout>

@@ -14,6 +14,47 @@ import { Search, Filter, Star, Download, Eye, Palette } from 'lucide-react';
 import { templateEngine } from '../services/templates/index.js';
 import TemplatePreview from './TemplatePreview';
 
+const ScaledThumbnail = ({ template }) => {
+  const containerRef = React.useRef(null);
+  const [scale, setScale] = React.useState(0.28); // Default safe scale
+
+  React.useEffect(() => {
+    if (!containerRef.current) return;
+    
+    const updateScale = () => {
+      const width = containerRef.current.offsetWidth;
+      if (width) {
+        setScale(width / 800);
+      }
+    };
+
+    updateScale();
+    
+    // Set up ResizeObserver for responsive resizing
+    const observer = new ResizeObserver(updateScale);
+    observer.observe(containerRef.current);
+    
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div 
+      ref={containerRef}
+      className="aspect-[8.5/11] bg-white border border-border shadow-sm rounded-lg mb-4 overflow-hidden relative w-full"
+    >
+      <iframe 
+        srcDoc={templateEngine.generatePreview(template).html}
+        className="absolute top-0 left-0 border-none origin-top-left pointer-events-none bg-white w-[800px] h-[1035px]"
+        style={{ 
+          transform: `scale(${scale})`
+        }}
+        title={template.name}
+        scrolling="no"
+      />
+    </div>
+  );
+};
+
 const TemplateGallery = ({ onTemplateSelect, selectedTemplateId, userProfile = null }) => {
   const [templates, setTemplates] = useState([]);
   const [filteredTemplates, setFilteredTemplates] = useState([]);
@@ -101,27 +142,28 @@ const TemplateGallery = ({ onTemplateSelect, selectedTemplateId, userProfile = n
 
   // Get ATS score color
   const getAtsScoreColor = (score) => {
-    if (score >= 90) return 'text-green-600 bg-green-100';
-    if (score >= 80) return 'text-blue-600 bg-blue-100';
-    if (score >= 70) return 'text-yellow-600 bg-yellow-100';
-    return 'text-red-600 bg-red-100';
+    if (score >= 90) return 'text-green-600 bg-green-500/10 dark:text-green-400 dark:bg-green-500/20';
+    if (score >= 80) return 'text-blue-600 bg-blue-500/10 dark:text-blue-400 dark:bg-blue-500/20';
+    if (score >= 70) return 'text-yellow-600 bg-yellow-500/10 dark:text-yellow-400 dark:bg-yellow-500/20';
+    return 'text-red-600 bg-red-500/10 dark:text-red-400 dark:bg-red-500/20';
   };
 
   // Render template card
   const renderTemplateCard = (template) => (
     <Card 
       key={template.id} 
-      className={`cursor-pointer transition-all duration-200 hover:shadow-lg ${
-        selectedTemplateId === template.id ? 'ring-2 ring-blue-500' : ''
+      className={`cursor-pointer transition-all duration-300 hover:scale-[1.01] hover:shadow-md border border-border shadow-sm bg-card hover:border-primary/30 ${
+        selectedTemplateId === template.id ? 'ring-2 ring-primary border-primary' : ''
       }`}
+      onClick={() => handlePreviewTemplate(template)}
     >
       <CardHeader className="pb-3">
-        <div className="flex justify-between items-start">
+        <div className="flex justify-between items-start gap-4">
           <div>
-            <CardTitle className="text-lg font-semibold">{template.name}</CardTitle>
-            <p className="text-sm text-gray-600 mt-1">{template.description}</p>
+            <CardTitle className="text-base font-bold text-foreground">{template.name}</CardTitle>
+            <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{template.description}</p>
           </div>
-          <Badge className={`${getAtsScoreColor(template.atsScore)} text-xs font-medium`}>
+          <Badge className={`${getAtsScoreColor(template.atsScore)} text-[10px] font-bold px-2 py-0.5 whitespace-nowrap`}>
             {template.atsScore}% ATS
           </Badge>
         </div>
@@ -129,77 +171,58 @@ const TemplateGallery = ({ onTemplateSelect, selectedTemplateId, userProfile = n
       
       <CardContent>
         {/* Template Preview Thumbnail */}
-        <div className="aspect-[8.5/11] bg-gray-100 rounded-lg mb-4 overflow-hidden">
-          <div 
-            className="w-full h-full bg-white shadow-sm transform scale-75 origin-top-left"
-            dangerouslySetInnerHTML={{ 
-              __html: template.preview || '<div class="p-4 text-gray-500">Preview Loading...</div>' 
-            }}
-          />
-        </div>
+        <ScaledThumbnail template={template} />
 
         {/* Template Info */}
         <div className="space-y-3">
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline" className="text-xs">
+          <div className="flex flex-wrap gap-1.5">
+            <Badge variant="secondary" className="text-[10px] px-2 py-0">
               {template.category}
             </Badge>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-[10px] px-2 py-0">
               {template.style}
             </Badge>
           </div>
 
           {/* Features */}
           {template.metadata?.features && (
-            <div className="text-xs text-gray-600">
-              <div className="font-medium mb-1">Features:</div>
-              <ul className="list-disc list-inside space-y-1">
+            <div className="text-[11px] text-muted-foreground">
+              <div className="font-semibold text-foreground mb-1 text-xs">Features:</div>
+              <ul className="list-disc list-inside space-y-0.5">
                 {template.metadata.features.slice(0, 3).map((feature, index) => (
-                  <li key={index}>{feature}</li>
+                  <li key={index} className="truncate">{feature}</li>
                 ))}
               </ul>
             </div>
           )}
 
           {/* Usage Stats */}
-          <div className="flex justify-between text-xs text-gray-500">
+          <div className="flex justify-between text-[11px] text-muted-foreground border-t border-border/60 pt-2.5">
             <span className="flex items-center gap-1">
-              <Download className="w-3 h-3" />
+              <Download className="w-3.5 h-3.5" />
               {template.metadata?.downloads || 0}
             </span>
             <span className="flex items-center gap-1">
-              <Eye className="w-3 h-3" />
+              <Eye className="w-3.5 h-3.5" />
               {Math.floor((template.metadata?.downloads || 0) * 5)}
             </span>
             <span className="flex items-center gap-1">
-              <Star className="w-3 h-3" />
+              <Star className="w-3.5 h-3.5" />
               {Math.floor(template.atsScore / 20)}
             </span>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2 pt-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                handlePreviewTemplate(template);
-              }}
-            >
-              <Eye className="w-4 h-4 mr-1" />
-              Preview
-            </Button>
+          <div className="pt-2">
             <Button
               size="sm"
-              className="flex-1"
+              className="w-full font-semibold bg-primary hover:bg-primary/95 text-primary-foreground"
               onClick={(e) => {
                 e.stopPropagation();
                 handleTemplateSelect(template);
               }}
             >
-              Select
+              Select Template
             </Button>
           </div>
         </div>

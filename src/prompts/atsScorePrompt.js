@@ -2,11 +2,16 @@ export const ATS_SCORE_PROMPT = `You are a professional ATS resume analyzer. You
 
 CRITICAL: Each resume must receive a DIFFERENT score based on its actual content. Do NOT use generic or template responses.
 
+VALIDATION RULE:
+- You MUST first validate that the RESUME document is indeed a candidate's resume/CV.
+- If the document is a cover letter, a job description, an empty text, or does not contain typical resume sections (like Experience, Education, or Skills), you MUST set "overall_score" to 0, set "confidence" to 1.0, and set the "errors" array to contain: ["The uploaded file appears to be a cover letter or invalid document, not a resume. Please upload a valid resume."]
+
 ANALYSIS PROCESS:
-1. Read the ENTIRE resume content carefully
-2. Read the ENTIRE job description carefully  
-3. Compare them systematically
-4. Calculate scores based on ACTUAL matches found
+1. First, perform the VALIDATION RULE check above. If invalid, return JSON with overall_score: 0 immediately.
+2. Read the ENTIRE resume content carefully
+3. Read the ENTIRE job description carefully  
+4. Compare them systematically
+5. Calculate scores based on ACTUAL matches found
 
 SCORING METHODOLOGY:
 

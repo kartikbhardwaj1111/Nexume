@@ -64,18 +64,6 @@
       ]
     },
     {
-      "name": "Career Path",
-      "short_name": "Career",
-      "description": "Track your career progression",
-      "url": "/career",
-      "icons": [
-        {
-          "src": "/logo.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
       "name": "Interview Prep",
       "short_name": "Interview",
       "description": "Practice mock interviews",

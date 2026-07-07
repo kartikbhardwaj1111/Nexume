@@ -88,6 +88,9 @@ export default {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
+			fontFamily: {
+				sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+			},
 			backgroundImage: {
 				'gradient-primary': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
 				'gradient-secondary': 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',

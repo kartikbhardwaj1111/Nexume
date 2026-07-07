@@ -18,7 +18,6 @@ const JobAnalysisPage = lazy(() => import("./pages/JobAnalysisPage"));
 const ReportPage = lazy(() => import("./pages/ReportPage"));
 const AnalyticsPage = lazy(() => import("./pages/AnalyticsPage").then(module => ({ default: module.AnalyticsPage })));
 const ATSChecker = lazy(() => import("./pages/ATSChecker"));
-const CareerPage = lazy(() => import("./pages/CareerPage"));
 const TemplatesPage = lazy(() => import("./pages/TemplatesPage"));
 const InterviewPrepPage = lazy(() => import("./pages/InterviewPrepPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -56,7 +55,6 @@ const App = () => {
                   <Route path="/job-analysis" element={<JobAnalysisPage />} />
                   <Route path="/report" element={<ReportPage />} />
                   <Route path="/analytics" element={<AnalyticsPage />} />
-                  <Route path="/career" element={<CareerPage />} />
                   <Route path="/templates" element={<TemplatesPage />} />
                   <Route path="/interview-prep" element={<InterviewPrepPage />} />
                   <Route path="*" element={<NotFound />} />

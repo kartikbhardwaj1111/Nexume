@@ -19,7 +19,6 @@ const Breadcrumb = ({ customBreadcrumbs = null }) => {
     '/ats-checker': 'ATS Checker',
     '/job-analysis': 'Job Analysis',
     '/templates': 'Templates',
-    '/career': 'Career Path',
     '/interview-prep': 'Interview Prep',
     '/analytics': 'Analytics',
     '/api-key': 'API Configuration',

@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import Layout from '../components/Layout';
 import { Button } from '../components/ui/button';
@@ -21,6 +22,9 @@ import {
 } from 'lucide-react';
 import TemplateGallery from '../components/TemplateGallery';
 import { templateDataManager } from '../services/templates/index.js';
+import SplitText from '../components/animations/SplitText';
+import BlurText from '../components/animations/BlurText';
+import DecryptedText from '../components/animations/DecryptedText';
 
 const TemplatesPage = () => {
   const navigate = useNavigate();
@@ -224,24 +228,22 @@ const TemplatesPage = () => {
       { path: '/', label: 'Home' },
       { path: '/templates', label: 'Templates' }
     ]}>
-      <div className="bg-gradient-to-br from-black via-gray-900 to-indigo-900/20">
-        <div className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-10 relative z-10 space-y-6">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Professional Resume Templates
+        <div className="text-center max-w-3xl mx-auto mb-10 space-y-3">
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground flex justify-center">
+            <SplitText text="Professional Resume Templates" />
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Choose from our collection of ATS-optimized resume templates designed by professionals. 
-            Get hired faster with templates that pass automated screening systems.
-          </p>
+          <div className="text-base text-muted-foreground">
+            <BlurText text="Choose from our collection of ATS-optimized resume templates designed by professionals. Get hired faster with templates that pass automated screening systems." stagger={0.01} delay={200} />
+          </div>
         </div>
 
         {/* Analytics Overview */}
         {renderAnalyticsOverview()}
 
         <Tabs defaultValue="browse" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto">
+          <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto bg-muted">
             <TabsTrigger value="browse">Browse All</TabsTrigger>
             <TabsTrigger value="recommended">Recommended</TabsTrigger>
             <TabsTrigger value="popular">Popular</TabsTrigger>
@@ -259,13 +261,13 @@ const TemplatesPage = () => {
             {renderRecommendations()}
             
             {!recommendations.length && (
-              <div className="text-center py-12">
-                <Sparkles className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Recommendations Yet</h3>
-                <p className="text-gray-600 mb-4">
+              <div className="text-center py-12 border border-dashed border-border rounded-xl bg-card">
+                <Sparkles className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-bold text-foreground mb-2">No Recommendations Yet</h3>
+                <p className="text-sm text-muted-foreground mb-4 max-w-sm mx-auto">
                   Complete your profile to get personalized template recommendations
                 </p>
-                <Button onClick={() => navigate('/profile')}>
+                <Button className="font-semibold" onClick={() => navigate('/profile')}>
                   Complete Profile
                 </Button>
               </div>
@@ -278,6 +280,7 @@ const TemplatesPage = () => {
             <div className="text-center">
               <Button 
                 variant="outline" 
+                className="font-semibold border-border"
                 onClick={() => navigate('/templates')}
               >
                 View All Templates
@@ -287,23 +290,29 @@ const TemplatesPage = () => {
         </Tabs>
 
         {/* Call to Action */}
-        <div className="text-center mt-12 p-8 bg-blue-50 rounded-lg">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Ready to Build Your Resume?
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Select a template above or start with our AI-powered resume analyzer
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Button onClick={() => navigate('/ats-checker')}>
+        <Card className="border border-border shadow-sm bg-card p-6 rounded-xl text-center max-w-4xl mx-auto mt-12">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xl font-bold text-foreground">Ready to Build Your Resume?</CardTitle>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+              Select a template above or check how your current resume performs against ATS guidelines.
+            </p>
+          </CardHeader>
+          <CardContent className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+            <Button 
+              className="font-semibold bg-primary hover:bg-primary/95 text-primary-foreground"
+              onClick={() => navigate('/resume')}
+            >
               Start Building
             </Button>
-            <Button variant="outline" onClick={() => navigate('/ats-checker')}>
+            <Button 
+              variant="outline" 
+              className="font-semibold border-border"
+              onClick={() => navigate('/ats-checker')}
+            >
               Check Existing Resume
             </Button>
-          </div>
-        </div>
-      </div>
+          </CardContent>
+        </Card>
       </div>
     </Layout>
   );
